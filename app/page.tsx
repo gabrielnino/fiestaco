@@ -369,7 +369,6 @@ export default function FiestaCo() {
             {t.heroCTA}
           </button>
         </div>
-
         <div
           style={{
             position: "absolute",
@@ -380,68 +379,64 @@ export default function FiestaCo() {
           }}
         >
           <div style={{ color: "#444", fontSize: 20 }}>↓</div>
+          <h2
+            style={{
+              fontFamily: "'Oswald', sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(22px, 4vw, 32px)",
+              textAlign: "center",
+              marginBottom: 40,
+              color: COLORS.bone,
+            }}
+          >
+            {t.howTitle}
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 20,
+            }}
+          >
+            {[
+              { icon: "🛒", step: "01", label: t.step1label, desc: t.step1desc },
+              { icon: "⏱️", step: "02", label: t.step2label, desc: t.step2desc },
+              { icon: "🏆", step: "03", label: t.step3label, desc: t.step3desc },
+            ].map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  background: COLORS.darkCard,
+                  border: `1px solid ${COLORS.cardBorder}`,
+                  borderRadius: 16,
+                  padding: "24px 16px",
+                  textAlign: "center",
+                }}
+              >
+                <div style={{ fontSize: 36, marginBottom: 12 }}>{item.icon}</div>
+                <div style={{ color: COLORS.orange, fontSize: 11, fontWeight: 700, letterSpacing: 2, marginBottom: 6 }}>
+                  STEP {item.step}
+                </div>
+                <div
+                  style={{
+                    fontFamily: "'Oswald', sans-serif",
+                    fontSize: 16,
+                    marginBottom: 6,
+                    color: COLORS.bone,
+                  }}
+                >
+                  {item.label}
+                </div>
+                <div style={{ color: "#777", fontSize: 13 }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
         <style>{`@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }`}</style>
       </section>
 
       {/* Problem + Product sections side by side like mockup */}
-
-
-      <section style={{ padding: "40px 20px 60px", maxWidth: 900, margin: "0 auto" }}>
-        <h2
-          style={{
-            fontFamily: "'Oswald', sans-serif",
-            fontWeight: 700,
-            fontSize: "clamp(22px, 4vw, 32px)",
-            textAlign: "center",
-            marginBottom: 40,
-            color: COLORS.bone,
-          }}
-        >
-          {t.howTitle}
-        </h2>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 20,
-          }}
-        >
-          {[
-            { icon: "🛒", step: "01", label: t.step1label, desc: t.step1desc },
-            { icon: "⏱️", step: "02", label: t.step2label, desc: t.step2desc },
-            { icon: "🏆", step: "03", label: t.step3label, desc: t.step3desc },
-          ].map((item, i) => (
-            <div
-              key={i}
-              style={{
-                background: COLORS.darkCard,
-                border: `1px solid ${COLORS.cardBorder}`,
-                borderRadius: 16,
-                padding: "24px 16px",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: 36, marginBottom: 12 }}>{item.icon}</div>
-              <div style={{ color: COLORS.orange, fontSize: 11, fontWeight: 700, letterSpacing: 2, marginBottom: 6 }}>
-                STEP {item.step}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Oswald', sans-serif",
-                  fontSize: 16,
-                  marginBottom: 6,
-                  color: COLORS.bone,
-                }}
-              >
-                {item.label}
-              </div>
-              <div style={{ color: "#777", fontSize: 13 }}>{item.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
 
       <section
         ref={configuratorRef}
