@@ -271,23 +271,30 @@ export default function FiestaCo() {
           overflow: "hidden",
         }}
       >
+        {/* Background photo */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            background: `radial-gradient(ellipse at 60% 40%, ${COLORS.magenta}20 0%, transparent 60%),
-                       radial-gradient(ellipse at 30% 70%, ${COLORS.orange}15 0%, transparent 50%),
-                       ${COLORS.black}`,
+            backgroundImage: "url('/background.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
+        {/* Dark overlay for text readability */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.72) 60%, rgba(11,11,11,0.95) 100%)",
           }}
         />
 
-        <div style={{ position: "absolute", top: 60, right: -20, opacity: 0.06, fontSize: 120 }}>💀</div>
-        <div style={{ position: "absolute", bottom: 80, left: -20, opacity: 0.06, fontSize: 100 }}>💀</div>
-
-        <div style={{ position: "absolute", top: 80, right: 20, opacity: 0.25 }}>
+        <div style={{ position: "absolute", top: 80, right: 20, opacity: 0.18 }}>
           <SkullLogo size={120} />
         </div>
-        <div style={{ position: "absolute", bottom: 100, left: 10, opacity: 0.15 }}>
+        <div style={{ position: "absolute", bottom: 100, left: 10, opacity: 0.12 }}>
           <SkullLogo size={90} />
         </div>
 
