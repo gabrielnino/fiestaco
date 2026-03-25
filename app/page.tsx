@@ -20,54 +20,41 @@ export default function FiestaCo() {
   const [drinks, setDrinks] = useState<string[]>([]);
   const [showMoreFlavors, setShowMoreFlavors] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const configuratorRef = useRef<HTMLElement>(null);
-  const step2Ref = useRef<HTMLDivElement>(null);
-  const step3Ref = useRef<HTMLDivElement>(null);
-  const step4Ref = useRef<HTMLDivElement>(null);
-  const summaryRef = useRef<HTMLDivElement>(null);
+
+  const scrollToStepContainer = () => {
+    configuratorRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleFlavor1Select = (f: any) => {
     setFlavor1(f);
     setTimeout(() => {
-      const el = step2Ref.current;
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+      setCurrentStep(2);
+      scrollToStepContainer();
     }, 150);
   };
 
   const handleFlavor2Select = (f: any) => {
     setFlavor2(f);
     setTimeout(() => {
-      const el = step3Ref.current;
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+      setCurrentStep(3);
+      scrollToStepContainer();
     }, 150);
   };
 
-  const handleNoneAddons = () => {
-    setAddons([]);
+  const handleNextAddons = () => {
     setTimeout(() => {
-      const el = step4Ref.current;
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+      setCurrentStep(4);
+      scrollToStepContainer();
     }, 150);
   };
 
-  const handleNoneDrinks = () => {
-    setDrinks([]);
+  const handleNextDrinks = () => {
     setTimeout(() => {
-      const el = summaryRef.current;
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
+      setCurrentStep(5);
+      scrollToStepContainer();
     }, 150);
   };
 
@@ -302,7 +289,7 @@ export default function FiestaCo() {
           <SkullLogo size={90} />
         </div>
 
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 760, paddingTop: 80 }}>
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 560, paddingTop: 80 }}>
           <h1
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
@@ -441,212 +428,275 @@ export default function FiestaCo() {
       <section
         ref={configuratorRef}
         style={{
-          padding: "40px 20px 120px",
-          maxWidth: 900,
-          margin: "0 auto",
+          position: "relative",
+          minHeight: "100vh",
+          width: "100vw",
+          boxSizing: "border-box",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "100px 20px 60px",
+          overflow: "hidden",
         }}
       >
-        <div
-          style={{
-            background: `linear-gradient(90deg, ${COLORS.orange}, ${COLORS.magenta})`,
-            borderRadius: 12,
-            padding: "4px 16px",
-            display: "inline-block",
-            marginBottom: 16,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontWeight: 700,
-              fontSize: 13,
-              letterSpacing: 3,
-              color: "#fff",
-            }}
-          >
-            {t.configTag}
-          </span>
-        </div>
-
-        <h2
-          style={{
-            fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: "clamp(32px, 7vw, 56px)",
-            letterSpacing: 2,
-            marginBottom: 6,
-            color: COLORS.bone,
-          }}
-        >
-          {t.configTitle}
-        </h2>
-
-        <p style={{ color: "#777", marginBottom: 40, fontSize: 15 }}>{t.configSub}</p>
-
-        <Step1Flavor
-          flavor1={flavor1}
-          flavor2={flavor2}
-          onSelect={handleFlavor1Select}
-          t={t}
-          visibleFlavors={visibleFlavors}
-          showMoreFlavors={showMoreFlavors}
-          onShowMore={() => setShowMoreFlavors(true)}
-        />
-
-        <Step2Flavor
-          containerRef={step2Ref}
-          flavor1={flavor1}
-          flavor2={flavor2}
-          onSelect={handleFlavor2Select}
-          t={t}
-          visibleFlavors={visibleFlavors}
-        />
-
-        <Step3Addons
-          containerRef={step3Ref}
-          addons={addons}
-          onToggle={toggleAddon}
-          onNext={handleNoneAddons}
-          t={t}
-        />
-
-        <Step4Drinks
-          containerRef={step4Ref}
-          drinks={drinks}
-          onToggle={toggleDrink}
-          onNext={handleNoneDrinks}
-          t={t}
-        />
-
-        <div
-          ref={summaryRef}
-          style={{
-            background: `linear-gradient(135deg, #1f1710, #1a1a1a)`,
-            border: `2px solid ${kitReady ? COLORS.orange : COLORS.cardBorder}`,
-            borderRadius: 20,
-            padding: "28px 24px",
-            boxShadow: kitReady ? `0 0 30px ${COLORS.orange}22` : "none",
-            transition: "all 0.3s",
-          }}
-        >
-          <h3
-            style={{
-              fontFamily: "'Oswald', sans-serif",
-              fontWeight: 700,
-              fontSize: 20,
-              marginBottom: 20,
-              color: COLORS.bone,
-            }}
-          >
-            {t.summaryTitle}
-          </h3>
-
-          <div style={{ marginBottom: 20 }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px 0",
-                borderBottom: `1px solid ${COLORS.cardBorder}`,
-              }}
-            >
-              <span style={{ color: "#888", fontSize: 14 }}>{t.flavor1}</span>
-              <span style={{ color: flavor1 ? COLORS.orange : "#555", fontWeight: 600 }}>{flavor1?.name || "—"}</span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px 0",
-                borderBottom: `1px solid ${COLORS.cardBorder}`,
-              }}
-            >
-              <span style={{ color: "#888", fontSize: 14 }}>{t.flavor2}</span>
-              <span style={{ color: flavor2 ? COLORS.magenta : "#555", fontWeight: 600 }}>{flavor2?.name || "—"}</span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px 0",
-                borderBottom: `1px solid ${COLORS.cardBorder}`,
-              }}
-            >
-              <span style={{ color: "#888", fontSize: 14 }}>{t.addonsLabel}</span>
-              <span style={{ color: "#ccc", fontSize: 13, textAlign: "right", maxWidth: 200 }}>
-                {addons.length > 0
-                  ? addons.map((id) => t.addonNames[id] || ADDONS.find((a) => a.id === id)?.name).join(", ")
-                  : t.none}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px 0",
-                borderBottom: `1px solid ${COLORS.cardBorder}`,
-              }}
-            >
-              <span style={{ color: "#888", fontSize: 14 }}>{t.drinksLabel}</span>
-              <span style={{ color: "#ccc", fontSize: 13, textAlign: "right", maxWidth: 200 }}>
-                {drinks.length > 0
-                  ? drinks.map((id) => DRINKS.find((d) => d.id === id)?.name).join(", ")
-                  : t.none}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "14px 0 0",
-              }}
-            >
-              <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 18, color: COLORS.bone }}>{t.total}</span>
-              <span
+        <div style={{ width: "100%", maxWidth: 900, textAlign: "left" }}>
+          
+          {/* Progress Indicator */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 40 }}>
+            {[1, 2, 3, 4, 5].map((step) => (
+              <div
+                key={step}
                 style={{
-                  fontFamily: "'Bebas Neue', sans-serif",
-                  fontSize: 28,
-                  color: COLORS.yellow,
-                  letterSpacing: 1,
+                  height: 4,
+                  flex: 1,
+                  background: currentStep >= step ? COLORS.orange : COLORS.cardBorder,
+                  borderRadius: 2,
+                  transition: "background 0.3s ease",
                 }}
-              >
-                CA${totalPrice}
-              </span>
-            </div>
+              />
+            ))}
           </div>
 
-          <button
-            onClick={handleOrder}
-            disabled={!kitReady}
-            style={{
-              width: "100%",
-              padding: "18px",
-              background: kitReady ? `linear-gradient(135deg, ${COLORS.orange}, ${COLORS.magenta})` : "#2a2a2a",
-              color: kitReady ? "#fff" : "#555",
-              border: "none",
-              borderRadius: 14,
-              cursor: kitReady ? "pointer" : "not-allowed",
-              fontFamily: "'Oswald', sans-serif",
-              fontWeight: 700,
-              fontSize: 18,
-              letterSpacing: 2,
-              boxShadow: kitReady ? `0 8px 24px ${COLORS.orange}44` : "none",
-              transition: "all 0.2s",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-            }}
-          >
-            📱 {t.orderBtn}
-          </button>
-
-          {!kitReady && (
-            <p style={{ textAlign: "center", color: "#555", fontSize: 12, marginTop: 10 }}>{t.selectBoth}</p>
+          {/* Optional Back Button */}
+          {currentStep > 1 && (
+            <button
+              onClick={() => setCurrentStep(currentStep - 1)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: COLORS.orange,
+                fontFamily: "'Oswald', sans-serif",
+                fontSize: 14,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                marginBottom: 20,
+                padding: 0,
+              }}
+            >
+              ← Back
+            </button>
           )}
+
+          <div style={{ animation: "fadeIn 0.4s ease" }}>
+            <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+            
+            {currentStep === 1 && (
+              <>
+                <div
+                  style={{
+                    background: `linear-gradient(90deg, ${COLORS.orange}, ${COLORS.magenta})`,
+                    borderRadius: 12,
+                    padding: "4px 16px",
+                    display: "inline-block",
+                    marginBottom: 16,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Oswald', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      letterSpacing: 3,
+                      color: "#fff",
+                    }}
+                  >
+                    {t.configTag}
+                  </span>
+                </div>
+
+                <h2
+                  style={{
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    fontSize: "clamp(32px, 7vw, 56px)",
+                    letterSpacing: 2,
+                    marginBottom: 6,
+                    color: COLORS.bone,
+                  }}
+                >
+                  {t.configTitle}
+                </h2>
+
+                <p style={{ color: "#777", marginBottom: 40, fontSize: 15 }}>{t.configSub}</p>
+
+                <Step1Flavor
+                  flavor1={flavor1}
+                  flavor2={flavor2}
+                  onSelect={handleFlavor1Select}
+                  t={t}
+                  visibleFlavors={visibleFlavors}
+                  showMoreFlavors={showMoreFlavors}
+                  onShowMore={() => setShowMoreFlavors(true)}
+                />
+              </>
+            )}
+
+            {currentStep === 2 && (
+              <Step2Flavor
+                containerRef={{ current: null }}
+                flavor1={flavor1}
+                flavor2={flavor2}
+                onSelect={handleFlavor2Select}
+                t={t}
+                visibleFlavors={visibleFlavors}
+              />
+            )}
+
+            {currentStep === 3 && (
+              <Step3Addons
+                containerRef={{ current: null }}
+                addons={addons}
+                onToggle={toggleAddon}
+                onNext={handleNextAddons}
+                t={t}
+              />
+            )}
+
+            {currentStep === 4 && (
+              <Step4Drinks
+                containerRef={{ current: null }}
+                drinks={drinks}
+                onToggle={toggleDrink}
+                onNext={handleNextDrinks}
+                t={t}
+              />
+            )}
+
+            {currentStep === 5 && (
+              <div
+                style={{
+                  background: `linear-gradient(135deg, #1f1710, #1a1a1a)`,
+                  border: `2px solid ${kitReady ? COLORS.orange : COLORS.cardBorder}`,
+                  borderRadius: 20,
+                  padding: "28px 24px",
+                  boxShadow: kitReady ? `0 0 30px ${COLORS.orange}22` : "none",
+                  transition: "all 0.3s",
+                }}
+              >
+                <h3
+                  style={{
+                    fontFamily: "'Oswald', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 20,
+                    marginBottom: 20,
+                    color: COLORS.bone,
+                  }}
+                >
+                  {t.summaryTitle}
+                </h3>
+
+                <div style={{ marginBottom: 20 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 0",
+                      borderBottom: `1px solid ${COLORS.cardBorder}`,
+                    }}
+                  >
+                    <span style={{ color: "#888", fontSize: 14 }}>{t.flavor1}</span>
+                    <span style={{ color: flavor1 ? COLORS.orange : "#555", fontWeight: 600 }}>{flavor1?.name || "—"}</span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 0",
+                      borderBottom: `1px solid ${COLORS.cardBorder}`,
+                    }}
+                  >
+                    <span style={{ color: "#888", fontSize: 14 }}>{t.flavor2}</span>
+                    <span style={{ color: flavor2 ? COLORS.magenta : "#555", fontWeight: 600 }}>{flavor2?.name || "—"}</span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 0",
+                      borderBottom: `1px solid ${COLORS.cardBorder}`,
+                    }}
+                  >
+                    <span style={{ color: "#888", fontSize: 14 }}>{t.addonsLabel}</span>
+                    <span style={{ color: "#ccc", fontSize: 13, textAlign: "right", maxWidth: 200 }}>
+                      {addons.length > 0
+                        ? addons.map((id) => t.addonNames[id] || ADDONS.find((a) => a.id === id)?.name).join(", ")
+                        : t.none}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "10px 0",
+                      borderBottom: `1px solid ${COLORS.cardBorder}`,
+                    }}
+                  >
+                    <span style={{ color: "#888", fontSize: 14 }}>{t.drinksLabel}</span>
+                    <span style={{ color: "#ccc", fontSize: 13, textAlign: "right", maxWidth: 200 }}>
+                      {drinks.length > 0
+                        ? drinks.map((id) => DRINKS.find((d) => d.id === id)?.name).join(", ")
+                        : t.none}
+                    </span>
+                  </div>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      padding: "14px 0 0",
+                    }}
+                  >
+                    <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 18, color: COLORS.bone }}>{t.total}</span>
+                    <span
+                      style={{
+                        fontFamily: "'Bebas Neue', sans-serif",
+                        fontSize: 28,
+                        color: COLORS.yellow,
+                        letterSpacing: 1,
+                      }}
+                    >
+                      CA${totalPrice}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleOrder}
+                  disabled={!kitReady}
+                  style={{
+                    width: "100%",
+                    padding: "18px",
+                    background: kitReady ? `linear-gradient(135deg, ${COLORS.orange}, ${COLORS.magenta})` : "#2a2a2a",
+                    color: kitReady ? "#fff" : "#555",
+                    border: "none",
+                    borderRadius: 14,
+                    cursor: kitReady ? "pointer" : "not-allowed",
+                    fontFamily: "'Oswald', sans-serif",
+                    fontWeight: 700,
+                    fontSize: 18,
+                    letterSpacing: 2,
+                    boxShadow: kitReady ? `0 8px 24px ${COLORS.orange}44` : "none",
+                    transition: "all 0.2s",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 10,
+                  }}
+                >
+                  📱 {t.orderBtn}
+                </button>
+
+                {!kitReady && (
+                  <p style={{ textAlign: "center", color: "#555", fontSize: 12, marginTop: 10 }}>{t.selectBoth}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
