@@ -173,7 +173,7 @@ export default function FiestaCo() {
       >
         {/* Logo + Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SkullLogo size={40} />
+          <SkullLogo size={72} />
           <span
             style={{
               fontFamily: "'Oswald', sans-serif",
@@ -187,27 +187,7 @@ export default function FiestaCo() {
           </span>
         </div>
 
-        {/* Nav links */}
-        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
-          {["Home", "Kits", "FAQ"].map((link) => (
-            <a
-              key={link}
-              href="#"
-              style={{
-                color: link === "Home" ? COLORS.orange : COLORS.bone,
-                fontFamily: "'Oswald', sans-serif",
-                fontWeight: 600,
-                fontSize: 14,
-                letterSpacing: 1,
-                textDecoration: "none",
-                opacity: 0.9,
-                transition: "color 0.2s",
-              }}
-            >
-              {link}
-            </a>
-          ))}
-        </nav>
+
 
         {/* Lang + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
