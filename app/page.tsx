@@ -161,9 +161,9 @@ export default function FiestaCo() {
           left: 0,
           right: 0,
           zIndex: 100,
-          padding: "12px 20px",
-          background: scrolled ? "rgba(11,11,11,0.95)" : "transparent",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
+          padding: "10px 32px",
+          background: scrolled ? "rgba(11,11,11,0.95)" : "rgba(0,0,0,0.4)",
+          backdropFilter: "blur(12px)",
           transition: "all 0.3s",
           display: "flex",
           alignItems: "center",
@@ -171,8 +171,9 @@ export default function FiestaCo() {
           borderBottom: scrolled ? `1px solid ${COLORS.cardBorder}` : "none",
         }}
       >
+        {/* Logo + Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SkullLogo size={72} />
+          <SkullLogo size={40} />
           <span
             style={{
               fontFamily: "'Oswald', sans-serif",
@@ -186,6 +187,29 @@ export default function FiestaCo() {
           </span>
         </div>
 
+        {/* Nav links */}
+        <nav style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          {["Home", "Kits", "FAQ"].map((link) => (
+            <a
+              key={link}
+              href="#"
+              style={{
+                color: link === "Home" ? COLORS.orange : COLORS.bone,
+                fontFamily: "'Oswald', sans-serif",
+                fontWeight: 600,
+                fontSize: 14,
+                letterSpacing: 1,
+                textDecoration: "none",
+                opacity: 0.9,
+                transition: "color 0.2s",
+              }}
+            >
+              {link}
+            </a>
+          ))}
+        </nav>
+
+        {/* Lang + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
@@ -298,40 +322,15 @@ export default function FiestaCo() {
           <SkullLogo size={90} />
         </div>
 
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 700 }}>
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              background: `${COLORS.orange}20`,
-              border: `1px solid ${COLORS.orange}50`,
-              borderRadius: 999,
-              padding: "6px 16px",
-              marginBottom: 24,
-            }}
-          >
-            <span style={{ fontSize: 14 }}>🌮</span>
-            <span
-              style={{
-                color: COLORS.orange,
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: 2,
-                textTransform: "uppercase",
-              }}
-            >
-              {t.badge}
-            </span>
-          </div>
-
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 760, paddingTop: 80 }}>
           <h1
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: "clamp(52px, 12vw, 96px)",
-              lineHeight: 1,
-              margin: "0 0 8px",
+              fontSize: "clamp(48px, 9vw, 84px)",
+              lineHeight: 1.05,
+              margin: "0 0 16px",
               letterSpacing: 2,
+              textShadow: "0 2px 20px rgba(0,0,0,0.6)",
             }}
           >
             <span style={{ color: COLORS.bone }}>{t.headline1}</span>
@@ -349,44 +348,17 @@ export default function FiestaCo() {
 
           <p
             style={{
-              fontSize: "clamp(15px, 3vw, 18px)",
-              color: "#aaa",
-              margin: "20px auto 8px",
-              maxWidth: 480,
+              fontSize: "clamp(15px, 2.5vw, 18px)",
+              color: "rgba(255,255,255,0.85)",
+              margin: "0 auto 8px",
+              maxWidth: 540,
               lineHeight: 1.6,
+              textShadow: "0 1px 8px rgba(0,0,0,0.5)",
             }}
           >
             {t.sub}
           </p>
-          <p style={{ fontSize: 15, color: "#777", marginBottom: 40 }}>{t.support}</p>
-
-          <div
-            style={{
-              background: `linear-gradient(180deg, #1a1a1a 0%, #111 100%)`,
-              borderRadius: 20,
-              overflow: "hidden",
-              border: `1px solid ${COLORS.cardBorder}`,
-              maxWidth: 600,
-              margin: "0 auto 40px",
-              aspectRatio: "16/9",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: `linear-gradient(135deg, ${COLORS.orange}10, ${COLORS.magenta}10)`,
-              }}
-            />
-            <div style={{ textAlign: "center", position: "relative", zIndex: 1, padding: 20 }}>
-              <div style={{ fontSize: 60, marginBottom: 12 }}>🌮🍺🏆</div>
-              <p style={{ color: "#555", fontSize: 13 }}>{t.friendsTacos}</p>
-            </div>
-          </div>
+          <p style={{ fontSize: 15, color: "rgba(255,255,255,0.6)", marginBottom: 36 }}>{t.support}</p>
 
           <button
             onClick={scrollToConfigurator}
@@ -395,23 +367,23 @@ export default function FiestaCo() {
               color: "#fff",
               border: "none",
               borderRadius: 999,
-              padding: "18px 40px",
-              fontSize: 16,
+              padding: "16px 44px",
+              fontSize: 15,
               fontFamily: "'Oswald', sans-serif",
               fontWeight: 700,
               letterSpacing: 2,
               cursor: "pointer",
-              boxShadow: `0 8px 32px ${COLORS.orange}44`,
+              boxShadow: `0 8px 32px ${COLORS.orange}55`,
               textTransform: "uppercase",
               transition: "transform 0.15s, box-shadow 0.15s",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "scale(1.04)";
-              e.currentTarget.style.boxShadow = `0 12px 40px ${COLORS.orange}66`;
+              e.currentTarget.style.boxShadow = `0 12px 40px ${COLORS.orange}77`;
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow = `0 8px 32px ${COLORS.orange}44`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${COLORS.orange}55`;
             }}
           >
             {t.heroCTA}
@@ -432,105 +404,8 @@ export default function FiestaCo() {
         <style>{`@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }`}</style>
       </section>
 
-      <section
-        style={{
-          padding: "60px 20px",
-          maxWidth: 900,
-          margin: "0 auto",
-        }}
-      >
-        <h2
-          style={{
-            fontFamily: "'Oswald', sans-serif",
-            fontWeight: 700,
-            fontSize: "clamp(28px, 6vw, 42px)",
-            marginBottom: 40,
-            lineHeight: 1.2,
-          }}
-        >
-          {t.problemTitle}
-        </h2>
+      {/* Problem + Product sections side by side like mockup */}
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: 20,
-            marginBottom: 60,
-          }}
-        >
-          {[
-            { icon: "😩", text: t.pain1 },
-            { icon: "🛵", text: t.pain2 },
-            { icon: "👥", text: t.pain3 },
-          ].map((item, i) => (
-            <div
-              key={i}
-              style={{
-                background: COLORS.darkCard,
-                border: `1px solid ${COLORS.cardBorder}`,
-                borderRadius: 16,
-                padding: "24px 20px",
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-              }}
-            >
-              <span style={{ fontSize: 32 }}>{item.icon}</span>
-              <span style={{ color: "#ccc", fontSize: 15, lineHeight: 1.4 }}>{item.text}</span>
-            </div>
-          ))}
-        </div>
-
-        <div
-          style={{
-            background: `linear-gradient(135deg, ${COLORS.darkCard}, #1f1a15)`,
-            border: `1px solid ${COLORS.orange}30`,
-            borderRadius: 20,
-            overflow: "hidden",
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 0,
-          }}
-        >
-          <div
-            style={{
-              background: `linear-gradient(135deg, ${COLORS.orange}15, ${COLORS.magenta}10)`,
-              padding: "40px 30px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minHeight: 180,
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 64, marginBottom: 8 }}>🌮</div>
-              <div style={{ fontSize: 40 }}>💀</div>
-            </div>
-          </div>
-
-          <div style={{ padding: "40px 30px" }}>
-            <h3
-              style={{
-                fontFamily: "'Oswald', sans-serif",
-                fontWeight: 700,
-                fontSize: 28,
-                marginBottom: 16,
-                color: COLORS.bone,
-              }}
-            >
-              {t.meetTitle}
-            </h3>
-            <p style={{ color: "#999", fontSize: 15, lineHeight: 1.8 }}>
-              {t.meetDesc}
-              <br />
-              <strong style={{ color: COLORS.orange }}>{t.noDecisions}</strong>{" "}
-              <strong style={{ color: COLORS.magenta }}>{t.noWaiting}</strong>{" "}
-              <strong style={{ color: COLORS.turquoise }}>{t.noInterruptions}</strong>
-            </p>
-          </div>
-        </div>
-      </section>
 
       <section style={{ padding: "40px 20px 60px", maxWidth: 900, margin: "0 auto" }}>
         <h2
@@ -872,30 +747,37 @@ export default function FiestaCo() {
 
       <footer
         style={{
-          padding: "30px 20px",
+          padding: "24px 32px",
           borderTop: `1px solid ${COLORS.cardBorder}`,
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          gap: 16,
+          gap: 12,
+          background: "#0a0a0a",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SkullLogo size={28} />
-          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 16 }}>
+          <SkullLogo size={32} />
+          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 18, fontWeight: 700 }}>
             <span style={{ color: COLORS.bone }}>FIESTA</span>
             <span style={{ color: COLORS.orange }}>CO</span>
           </span>
         </div>
 
-        <div style={{ display: "flex", gap: 24, color: "#555", fontSize: 13 }}>
-          <span>{lang === "en" ? "About Us" : "Nosotros"}</span>
-          <span>{lang === "en" ? "Contact" : "Contacto"}</span>
-          <span>{lang === "en" ? "Privacy Policy" : "Política de Privacidad"}</span>
+        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+          {["About Us", "Contact", "Privacy Policy"].map((link) => (
+            <a
+              key={link}
+              href="#"
+              style={{ color: "#666", fontSize: 13, textDecoration: "none" }}
+            >
+              {lang === "en" ? link : link === "About Us" ? "Nosotros" : link === "Contact" ? "Contacto" : "Privacidad"}
+            </a>
+          ))}
         </div>
 
-        <span style={{ color: "#444", fontSize: 12 }}>{t.footerCopy}</span>
+        <span style={{ color: "#3a3a3a", fontSize: 12 }}>© Copyright {new Date().getFullYear()}</span>
       </footer>
 
       {kitReady && (
