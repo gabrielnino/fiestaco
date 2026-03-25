@@ -436,12 +436,13 @@ export default function FiestaCo() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "100px 20px 60px",
-          overflow: "hidden",
+          padding: "100px 20px 40px",
+          overflowX: "hidden",
+          overflowY: "auto",
         }}
       >
         <div style={{ width: "100%", maxWidth: 900, textAlign: "left" }}>
-          
+
           {/* Progress Indicator */}
           <div style={{ display: "flex", gap: 8, marginBottom: 40 }}>
             {[1, 2, 3, 4, 5].map((step) => (
@@ -482,42 +483,46 @@ export default function FiestaCo() {
 
           <div style={{ animation: "fadeIn 0.4s ease" }}>
             <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-            
-            <div
-              style={{
-                background: `linear-gradient(90deg, ${COLORS.orange}, ${COLORS.magenta})`,
-                borderRadius: 12,
-                padding: "4px 16px",
-                display: "inline-block",
-                marginBottom: 16,
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: "'Oswald', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 13,
-                  letterSpacing: 3,
-                  color: "#fff",
-                }}
-              >
-                {t.configTag}
-              </span>
-            </div>
 
-            <h2
-              style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: "clamp(32px, 7vw, 56px)",
-                letterSpacing: 2,
-                marginBottom: 6,
-                color: COLORS.bone,
-              }}
-            >
-              {t.configTitle}
-            </h2>
+            {currentStep < 5 && (
+              <>
+                <div
+                  style={{
+                    background: `linear-gradient(90deg, ${COLORS.orange}, ${COLORS.magenta})`,
+                    borderRadius: 12,
+                    padding: "4px 16px",
+                    display: "inline-block",
+                    marginBottom: 16,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "'Oswald', sans-serif",
+                      fontWeight: 700,
+                      fontSize: 13,
+                      letterSpacing: 3,
+                      color: "#fff",
+                    }}
+                  >
+                    {t.configTag}
+                  </span>
+                </div>
 
-            <p style={{ color: "#777", marginBottom: 30, fontSize: 15 }}>{t.configSub}</p>
+                <h2
+                  style={{
+                    fontFamily: "'Bebas Neue', sans-serif",
+                    fontSize: "clamp(32px, 7vw, 56px)",
+                    letterSpacing: 2,
+                    marginBottom: 6,
+                    color: COLORS.bone,
+                  }}
+                >
+                  {t.configTitle}
+                </h2>
+
+                <p style={{ color: "#777", marginBottom: 30, fontSize: 15 }}>{t.configSub}</p>
+              </>
+            )}
 
             {currentStep === 1 && (
               <Step1Flavor

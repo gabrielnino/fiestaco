@@ -19,8 +19,8 @@ export default function Step4Drinks({
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
         <div
           style={{
-            background: "#333",
-            color: "#888",
+            background: drinks.length > 0 ? COLORS.magenta : "#333",
+            color: drinks.length > 0 ? "#fff" : "#888",
             fontFamily: "'Oswald', sans-serif",
             fontWeight: 700,
             fontSize: 13,
