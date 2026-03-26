@@ -26,7 +26,26 @@ export default function AddonToggle({
         transition: "all 0.2s",
       }}
     >
-      <span style={{ color: COLORS.bone, fontFamily: "'Oswald', sans-serif", fontSize: 15 }}>{label}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        {addon.image && (
+          <div
+            style={{
+              width: 64,
+              height: 64,
+              borderRadius: "50%",
+              overflow: "hidden",
+              border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
+              transition: "border-color 0.2s",
+              flexShrink: 0,
+            }}
+          >
+            <img src={addon.image} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </div>
+        )}
+        <span style={{ color: COLORS.bone, fontFamily: "'Oswald', sans-serif", fontSize: selected ? 16 : 15, transition: "all 0.2s" }}>
+          {label}
+        </span>
+      </div>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ color: COLORS.yellow, fontSize: 13, fontWeight: 600 }}>+CA${addon.price}</span>
         <div

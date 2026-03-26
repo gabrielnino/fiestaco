@@ -387,9 +387,44 @@ export default function FiestaCo() {
             }}
           >
             {[
-              { icon: "🛒", step: "01", label: t.step1label, desc: t.step1desc },
-              { icon: "⏱️", step: "02", label: t.step2label, desc: t.step2desc },
-              { icon: "🏆", step: "03", label: t.step3label, desc: t.step3desc },
+              {
+                icon: (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={COLORS.orange} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                  </svg>
+                ),
+                step: "01",
+                label: t.step1label,
+                desc: t.step1desc,
+              },
+              {
+                icon: (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={COLORS.magenta} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                ),
+                step: "02",
+                label: t.step2label,
+                desc: t.step2desc,
+              },
+              {
+                icon: (
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={COLORS.turquoise} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M8 21h8" />
+                    <path d="M12 17v4" />
+                    <path d="M7 4h10" />
+                    <path d="M17 4v8a5 5 0 0 1-10 0V4" />
+                    <path d="M4 4h3v8H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" />
+                    <path d="M20 4h-3v8h3a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
+                  </svg>
+                ),
+                step: "03",
+                label: t.step3label,
+                desc: t.step3desc,
+              },
             ].map((item, i) => (
               <div
                 key={i}
@@ -401,7 +436,7 @@ export default function FiestaCo() {
                   textAlign: "center",
                 }}
               >
-                <div style={{ fontSize: 36, marginBottom: 12 }}>{item.icon}</div>
+                <div style={{ marginBottom: 16, display: "flex", justifyContent: "center" }}>{item.icon}</div>
                 <div style={{ color: COLORS.orange, fontSize: 11, fontWeight: 700, letterSpacing: 2, marginBottom: 6 }}>
                   STEP {item.step}
                 </div>

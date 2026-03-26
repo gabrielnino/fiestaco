@@ -29,18 +29,18 @@ export const FLAVORS = [
 ];
 
 export const ADDONS = [
-  { id: "cheese", name: "Shredded Cheese", price: 12 },
-  { id: "guac", name: "Guacamole", price: 12 },
-  { id: "pico", name: "Pico de Gallo", price: 12 },
-  { id: "crema", name: "Mexican Crema", price: 8 },
-  { id: "jalaps", name: "Pickled Jalapeños", price: 8 },
-  { id: "salsa-verde", name: "Salsa Verde", price: 8 },
+  { id: "cheese", name: "Shredded Cheese", price: 12, image: "/images/addons/cheese.png" },
+  { id: "guac", name: "Guacamole", price: 12, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Guacomole.jpg/400px-Guacomole.jpg" },
+  { id: "pico", name: "Pico de Gallo", price: 12, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Mmm..._Pico_de_Gallo_%285923456035%29.jpg/500px-Mmm..._Pico_de_Gallo_%285923456035%29.jpg" },
+  { id: "crema", name: "Mexican Crema", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Bowl_of_chili_with_sour_cream_and_cheese.jpg/500px-Bowl_of_chili_with_sour_cream_and_cheese.jpg" },
+  { id: "jalaps", name: "Pickled Jalapeños", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Immature_jalapeno_capsicum_annuum_var_annuum.jpeg/500px-Immature_jalapeno_capsicum_annuum_var_annuum.jpeg" },
+  { id: "salsa-verde", name: "Salsa Verde", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Salsa_verde.jpg/500px-Salsa_verde.jpg" },
 ];
 
 export const DRINKS = [
-  { id: "corona-6", name: "Corona x 6", price: 17.31 },
-  { id: "budweiser-24", name: "Budweiser Lager x 24", price: 55.95 },
-  { id: "pacifico-6", name: "Pacifico Lager x 6", price: 17.09 },
+  { id: "corona-6", name: "Corona x 6", price: 17.31, image: "https://loremflickr.com/400/400/corona,beer/all" },
+  { id: "budweiser-24", name: "Budweiser Lager x 24", price: 55.95, image: "https://loremflickr.com/400/400/budweiser,beer/all" },
+  { id: "pacifico-6", name: "Pacifico Lager x 6", price: 17.09, image: "https://loremflickr.com/400/400/mexican,beer/all" },
 ];
 
 export const BASE_PRICE = 45;
