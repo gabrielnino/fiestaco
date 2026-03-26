@@ -176,7 +176,7 @@ export default function FiestaCo() {
 
 
 
-        {/* Lang + CTA */}
+        {/* Lang + Social + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div
             style={{
@@ -226,6 +226,17 @@ export default function FiestaCo() {
               ES
             </button>
           </div>
+
+          {/* Social Icons in Header */}
+          <a href="mailto:hello@fiestaco.today" title="hello@fiestaco.today" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+          </a>
+          <a href="https://instagram.com/fiestacotoday" target="_blank" rel="noreferrer" title="@fiestacotoday" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.magenta)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg>
+          </a>
+          <a href="https://tiktok.com/@fiestacotoday" target="_blank" rel="noreferrer" title="@fiestacotoday" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.turquoise)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
+          </a>
 
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -813,37 +824,98 @@ export default function FiestaCo() {
 
       <footer
         style={{
-          padding: "24px 32px",
+          padding: "32px 32px 24px",
           borderTop: `1px solid ${COLORS.cardBorder}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 12,
           background: "#0a0a0a",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SkullLogo size={32} />
-          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 18, fontWeight: 700 }}>
-            <span style={{ color: COLORS.bone }}>FIESTA</span>
-            <span style={{ color: COLORS.orange }}>CO</span>
-          </span>
-        </div>
+        {/* Top row: Logo + Social */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 16,
+            marginBottom: 20,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <SkullLogo size={32} />
+            <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 18, fontWeight: 700 }}>
+              <span style={{ color: COLORS.bone }}>FIESTA</span>
+              <span style={{ color: COLORS.orange }}>CO</span>
+            </span>
+          </div>
 
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-          {["About Us", "Contact", "Privacy Policy"].map((link) => (
+          {/* Social Icons */}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {/* Email */}
             <a
-              key={link}
-              href="#"
-              style={{ color: "#666", fontSize: 13, textDecoration: "none" }}
+              href="mailto:hello@fiestaco.today"
+              title="hello@fiestaco.today"
+              style={{ color: "#666", transition: "color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
             >
-              {lang === "en" ? link : link === "About Us" ? "Nosotros" : link === "Contact" ? "Contacto" : "Privacidad"}
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              </svg>
             </a>
-          ))}
+            {/* Instagram */}
+            <a
+              href="https://instagram.com/fiestacotoday"
+              target="_blank"
+              rel="noreferrer"
+              title="@fiestacotoday"
+              style={{ color: "#666", transition: "color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.magenta)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" />
+                <circle cx="12" cy="12" r="5" />
+                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            {/* TikTok */}
+            <a
+              href="https://tiktok.com/@fiestacotoday"
+              target="_blank"
+              rel="noreferrer"
+              title="@fiestacotoday"
+              style={{ color: "#666", transition: "color 0.2s" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.turquoise)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+              </svg>
+            </a>
+          </div>
         </div>
 
-        <span style={{ color: "#3a3a3a", fontSize: 12 }}>© Copyright {new Date().getFullYear()}</span>
+        {/* Bottom row: Email text + Copyright */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 8,
+            borderTop: `1px solid ${COLORS.cardBorder}`,
+            paddingTop: 16,
+          }}
+        >
+          <a
+            href="mailto:hello@fiestaco.today"
+            style={{ color: "#555", fontSize: 13, textDecoration: "none" }}
+          >
+            hello@fiestaco.today
+          </a>
+          <span style={{ color: "#3a3a3a", fontSize: 12 }}>© Copyright {new Date().getFullYear()}</span>
+        </div>
       </footer>
 
       {kitReady && (
