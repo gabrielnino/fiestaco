@@ -132,7 +132,7 @@ export default function FiestaCo() {
   const kitReady = Boolean(flavor1 && flavor2);
 
   return (
-    <div
+    <main
       style={{
         background: COLORS.black,
         minHeight: "100vh",
@@ -751,16 +751,17 @@ export default function FiestaCo() {
           <div style={{ marginBottom: 40 }}>
             <p style={{ color: COLORS.orange, fontSize: 18, fontStyle: "italic", marginBottom: 8 }}>{t.exp1}</p>
             <p style={{ color: COLORS.magenta, fontSize: 18, fontStyle: "italic", marginBottom: 8 }}>{t.exp2}</p>
-            <p
+            <h2
               style={{
                 fontFamily: "'Oswald', sans-serif",
                 fontWeight: 700,
                 fontSize: "clamp(20px, 4vw, 28px)",
                 color: COLORS.bone,
+                margin: 0,
               }}
             >
               {t.exp3}
-            </p>
+            </h2>
           </div>
 
           <div
@@ -904,6 +905,6 @@ export default function FiestaCo() {
           </button>
         </div>
       )}
-    </div>
+    </main>
   );
 }
