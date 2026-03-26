@@ -568,6 +568,7 @@ export default function FiestaCo() {
                 visibleFlavors={visibleFlavors}
                 showMoreFlavors={showMoreFlavors}
                 onShowMore={() => setShowMoreFlavors(true)}
+                onNext={() => setCurrentStep(2)}
               />
             )}
 
@@ -579,6 +580,7 @@ export default function FiestaCo() {
                 onSelect={handleFlavor2Select}
                 t={t}
                 visibleFlavors={visibleFlavors}
+                onNext={() => setCurrentStep(3)}
               />
             )}
 

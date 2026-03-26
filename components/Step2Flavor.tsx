@@ -8,6 +8,7 @@ export default function Step2Flavor({
   onSelect,
   t,
   visibleFlavors,
+  onNext,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
   flavor1: any;
@@ -15,6 +16,7 @@ export default function Step2Flavor({
   onSelect: (f: any) => void;
   t: any;
   visibleFlavors: any[];
+  onNext: () => void;
 }) {
   return (
     <div ref={containerRef} style={{ marginBottom: 40 }}>
@@ -78,6 +80,27 @@ export default function Step2Flavor({
           }}
         >
           {t.selectFirst}
+        </div>
+      )}
+
+      {flavor2 && (
+        <div
+          onClick={onNext}
+          style={{
+            background: COLORS.magenta,
+            borderRadius: 12,
+            padding: "14px 16px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.2s",
+            marginTop: 16,
+          }}
+        >
+          <span style={{ color: "#fff", fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: 16 }}>
+            {t.next} →
+          </span>
         </div>
       )}
     </div>

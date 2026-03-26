@@ -9,6 +9,7 @@ export default function Step1Flavor({
   visibleFlavors,
   showMoreFlavors,
   onShowMore,
+  onNext,
 }: {
   flavor1: any;
   flavor2: any;
@@ -17,6 +18,7 @@ export default function Step1Flavor({
   visibleFlavors: any[];
   showMoreFlavors: boolean;
   onShowMore: () => void;
+  onNext: () => void;
 }) {
   return (
     <div style={{ marginBottom: 40 }}>
@@ -85,6 +87,27 @@ export default function Step1Flavor({
         >
           {t.moreOptions}
         </button>
+      )}
+
+      {flavor1 && (
+        <div
+          onClick={onNext}
+          style={{
+            background: COLORS.orange,
+            borderRadius: 12,
+            padding: "14px 16px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "all 0.2s",
+            marginTop: 16,
+          }}
+        >
+          <span style={{ color: "#000", fontFamily: "'Oswald', sans-serif", fontWeight: 700, fontSize: 16 }}>
+            {t.next} →
+          </span>
+        </div>
       )}
     </div>
   );
