@@ -5,11 +5,13 @@ export default function AddonToggle({
   selected,
   onToggle,
   label,
+  isDrink = false,
 }: {
   addon: any;
   selected: boolean;
   onToggle: (id: string) => void;
   label: string;
+  isDrink?: boolean;
 }) {
   return (
     <div
@@ -30,16 +32,18 @@ export default function AddonToggle({
         {addon.image && (
           <div
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: "50%",
+              width: isDrink ? 54 : 64,
+              height: isDrink ? 80 : 64,
+              borderRadius: isDrink ? 12 : "50%",
+              backgroundColor: isDrink ? "#1a1a1a" : "transparent",
               overflow: "hidden",
               border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
               transition: "border-color 0.2s",
               flexShrink: 0,
+              padding: isDrink ? 4 : 0,
             }}
           >
-            <img src={addon.image} alt={label} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={addon.image} alt={label} style={{ width: "100%", height: "100%", objectFit: isDrink ? "contain" : "cover" }} />
           </div>
         )}
         <span style={{ color: COLORS.bone, fontFamily: "'Oswald', sans-serif", fontSize: selected ? 16 : 15, transition: "all 0.2s" }}>

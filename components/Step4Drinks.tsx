@@ -58,6 +58,7 @@ export default function Step4Drinks({
             selected={drinks.includes(drink.id)}
             onToggle={onToggle}
             label={drink.name}
+            isDrink={true}
           />
         ))}
         <div

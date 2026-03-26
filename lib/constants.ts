@@ -38,9 +38,9 @@ export const ADDONS = [
 ];
 
 export const DRINKS = [
-  { id: "corona-6", name: "Corona x 6", price: 17.31, image: "https://loremflickr.com/400/400/corona,beer/all" },
-  { id: "budweiser-24", name: "Budweiser Lager x 24", price: 55.95, image: "https://loremflickr.com/400/400/budweiser,beer/all" },
-  { id: "pacifico-6", name: "Pacifico Lager x 6", price: 17.09, image: "https://loremflickr.com/400/400/mexican,beer/all" },
+  { id: "corona-6", name: "Corona x 6", price: 17.31, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Corona_Extra_beer_bottle_%282019%29.png/500px-Corona_Extra_beer_bottle_%282019%29.png" },
+  { id: "budweiser-24", name: "Budweiser Lager x 24", price: 55.95, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/Budweiser_bottle_close-up.jpg/500px-Budweiser_bottle_close-up.jpg" },
+  { id: "pacifico-6", name: "Pacifico Lager x 6", price: 17.09, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Advertising_campaign_for_Pacifico_Clara.jpeg/500px-Advertising_campaign_for_Pacifico_Clara.jpeg" },
 ];
 
 export const BASE_PRICE = 45;
