@@ -54,7 +54,22 @@ export default function FlavorCard({
           ✓
         </div>
       )}
-      <span style={{ fontSize: 32 }}>{flavor.emoji}</span>
+      <div 
+        style={{ 
+          width: 80, 
+          height: 80, 
+          borderRadius: "50%", 
+          overflow: "hidden", 
+          marginBottom: 4,
+          border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
+        }}
+      >
+        <img 
+          src={flavor.image || "/images/placeholder.png"} 
+          alt={flavor.name} 
+          style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+        />
+      </div>
       <span
         style={{
           color: COLORS.bone,

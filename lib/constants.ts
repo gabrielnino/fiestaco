@@ -11,21 +11,21 @@ export const COLORS = {
 };
 
 export const FLAVORS = [
-  { id: "al-pastor", name: "Al Pastor", emoji: "🌮" },
-  { id: "chorizo", name: "Chorizo", emoji: "🌶️" },
-  { id: "pierna", name: "Pierna", emoji: "🥩" },
-  { id: "pollo-pibil", name: "Pollo Pibil", emoji: "🍗" },
-  { id: "chipotle-beans", name: "Chipotle Beans", emoji: "🫘" },
-  { id: "elote", name: "Elote", emoji: "🌽" },
-  { id: "lengua", name: "Lengua", emoji: "👅", surcharge: 5 },
-  { id: "carnitas", name: "Carnitas", emoji: "🐷", surcharge: 5 },
-  { id: "pollo-mole", name: "Pollo en Mole", emoji: "🍲", surcharge: 5 },
-  { id: "picadillo", name: "Picadillo", emoji: "🥘", surcharge: 5 },
-  { id: "barbacoa-cordero", name: "Barbacoa de Cordero", emoji: "🐑", surcharge: 5 },
-  { id: "cauliflower", name: "Cauliflower", emoji: "🥦", surcharge: 5 },
-  { id: "tinga-veg", name: "Tinga Vegetariana", emoji: "🥗", surcharge: 5 },
-  { id: "shrimp", name: "Shrimp", emoji: "🍤", surcharge: 5 },
-  { id: "fish", name: "Fish", emoji: "🐟", surcharge: 5 },
+  { id: "al-pastor", name: "Al Pastor", image: "/images/flavors/al_pastor.png" },
+  { id: "chorizo", name: "Chorizo", image: "/images/flavors/chorizo.png" },
+  { id: "pierna", name: "Pierna", image: "/images/flavors/pierna.png" },
+  { id: "pollo-pibil", name: "Pollo Pibil", image: "/images/flavors/pollo_pibil.png" },
+  { id: "chipotle-beans", name: "Chipotle Beans", image: "/images/flavors/chipotle_beans.png" },
+  { id: "elote", name: "Elote", image: "/images/flavors/elote.png" },
+  { id: "lengua", name: "Lengua", image: "/images/flavors/lengua.png", surcharge: 5 },
+  { id: "carnitas", name: "Carnitas", image: "/images/flavors/carnitas.png", surcharge: 5 },
+  { id: "pollo-mole", name: "Pollo en Mole", image: "/images/flavors/pollo_mole.png", surcharge: 5 },
+  { id: "picadillo", name: "Picadillo", image: "/images/flavors/picadillo.png", surcharge: 5 },
+  { id: "barbacoa-cordero", name: "Barbacoa de Cordero", image: "/images/flavors/barbacoa_cordero.png", surcharge: 5 },
+  { id: "cauliflower", name: "Cauliflower", image: "/images/flavors/cauliflower.png", surcharge: 5 },
+  { id: "tinga-veg", name: "Tinga Vegetariana", image: "/images/flavors/tinga_veg.png", surcharge: 5 },
+  { id: "shrimp", name: "Shrimp", image: "/images/flavors/shrimp.png", surcharge: 5 },
+  { id: "fish", name: "Fish", image: "/images/flavors/fish.png", surcharge: 5 },
 ];
 
 export const ADDONS = [
