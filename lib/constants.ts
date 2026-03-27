@@ -44,4 +44,4 @@ export const DRINKS = [
 ];
 
 export const BASE_PRICE = 45;
-export const WHATSAPP_NUMBER = "15551234567";
+export const WHATSAPP_NUMBER = "17786519020";
