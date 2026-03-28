@@ -1,0 +1,66 @@
+# Dockerfile COMPLETO para Fiestaco con todas las dependencias
+# Incluye SQLite a nivel de sistema y paquetes Node.js
+
+# Etapa 1: Builder
+FROM node:20-alpine AS builder
+
+# Instalar dependencias del sistema INCLUYENDO SQLite
+RUN apk add --no-cache libc6-compat sqlite sqlite-dev python3 make g++
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de configuración
+COPY package*.json ./
+COPY package-lock.json* ./
+
+# Instalar TODAS las dependencias (incluyendo devDependencies para build)
+RUN npm ci
+
+# Copiar código fuente
+COPY . .
+
+# Construir aplicación
+RUN npm run build
+
+# Etapa 2: Runner
+FROM node:20-alpine AS runner
+
+# Instalar dependencias del sistema INCLUYENDO SQLite
+RUN apk add --no-cache libc6-compat sqlite
+
+# Crear usuario no-root para seguridad
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos estáticos
+COPY --from=builder /app/public ./public
+
+# Copiar aplicación construida
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Copiar node_modules con sqlite/sqlite3
+COPY --from=builder /app/node_modules ./node_modules
+
+# Configurar permisos
+RUN chown -R nextjs:nodejs /app
+
+# Cambiar a usuario no-root
+USER nextjs
+
+# Exponer puerto
+EXPOSE 3001
+
+# Variables de entorno
+ENV PORT=3001
+ENV HOSTNAME="0.0.0.0"
+ENV NODE_ENV="production"
+ENV ANALYTICS_TOKEN="fiestaco-dev"
+ENV DASHBOARD_TOKEN="fiestaco-admin-2024"
+
+# Comando de inicio
+CMD ["node", "server.js"]
