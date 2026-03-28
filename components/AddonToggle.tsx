@@ -1,4 +1,5 @@
 import { COLORS } from "../lib/constants";
+import ImageOptimized from "./ImageOptimized";
 
 export default function AddonToggle({
   addon,
@@ -43,7 +44,13 @@ export default function AddonToggle({
               padding: isDrink ? 4 : 0,
             }}
           >
-            <img src={addon.image} alt={label} style={{ width: "100%", height: "100%", objectFit: isDrink ? "contain" : "cover" }} />
+            <ImageOptimized 
+              src={addon.image} 
+              alt={label}
+              width={isDrink ? 54 : 64}
+              height={isDrink ? 80 : 64}
+              style={{ width: "100%", height: "100%", objectFit: isDrink ? "contain" : "cover" }}
+            />
           </div>
         )}
         <span style={{ color: COLORS.bone, fontFamily: "'Oswald', sans-serif", fontSize: selected ? 16 : 15, transition: "all 0.2s" }}>

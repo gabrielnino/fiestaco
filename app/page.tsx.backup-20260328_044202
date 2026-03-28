@@ -12,7 +12,7 @@ import Step1Flavor from "../components/Step1Flavor";
 import Step2Flavor from "../components/Step2Flavor";
 import Step3Addons from "../components/Step3Addons";
 import Step4Drinks from "../components/Step4Drinks";
-import { analytics } from "../lib/analytics";
+import { trackWhatsAppOrder, trackFlavorSelect, trackAddonSelect, trackDrinkSelect, trackKitCustomization } from "../lib/analytics";
 
 export default function FiestaCo() {
   const [lang, setLang] = useState<"en" | "es">("en");
@@ -34,11 +34,10 @@ export default function FiestaCo() {
 
   const handleFlavor1Select = (f: any) => {
     setFlavor1(f);
-    // Track flavor selection and step completion
+    // Track flavor selection
     if (f?.id) {
-      analytics.flavorSelect(f.id);
+      trackFlavorSelect(f.id);
     }
-    analytics.stepVisit(1);
     setTimeout(() => {
       setCurrentStep(2);
       scrollToStepContainer();
@@ -47,11 +46,10 @@ export default function FiestaCo() {
 
   const handleFlavor2Select = (f: any) => {
     setFlavor2(f);
-    // Track flavor selection and step completion
+    // Track flavor selection
     if (f?.id) {
-      analytics.flavorSelect(f.id);
+      trackFlavorSelect(f.id);
     }
-    analytics.stepVisit(2);
     setTimeout(() => {
       setCurrentStep(3);
       scrollToStepContainer();
@@ -59,8 +57,6 @@ export default function FiestaCo() {
   };
 
   const handleNextAddons = () => {
-    // Track step completion
-    analytics.stepVisit(3);
     setTimeout(() => {
       setCurrentStep(4);
       scrollToStepContainer();
@@ -68,8 +64,6 @@ export default function FiestaCo() {
   };
 
   const handleNextDrinks = () => {
-    // Track step completion
-    analytics.stepVisit(4);
     setTimeout(() => {
       setCurrentStep(5);
       scrollToStepContainer();
@@ -98,13 +92,7 @@ export default function FiestaCo() {
   useEffect(() => {
     const flavorCount = (flavor1 ? 1 : 0) + (flavor2 ? 1 : 0);
     if (flavorCount > 0 || addons.length > 0 || drinks.length > 0) {
-      analytics.kitComplete({
-        flavor1: flavor1?.id || 'none',
-        flavor2: flavor2?.id || 'none',
-        addons,
-        drinks,
-        totalPrice: BASE_PRICE + addonTotal + drinkTotal
-      });
+      trackKitCustomization(flavorCount, addons.length, drinks.length);
     }
   }, [flavor1, flavor2, addons, drinks]);
 
@@ -116,7 +104,7 @@ export default function FiestaCo() {
     
     // Track add-on selection/deselection
     if (!wasSelected) {
-      analytics.addonSelect(id);
+      trackAddonSelect(id);
     }
   };
 
@@ -126,7 +114,7 @@ export default function FiestaCo() {
     
     // Track drink selection/deselection
     if (!wasSelected) {
-      analytics.drinkSelect(id);
+      trackDrinkSelect(id);
     }
   };
 
@@ -167,21 +155,16 @@ export default function FiestaCo() {
     const msg = buildWhatsAppMessage();
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     
-    // Track the order with our analytics
-    analytics.whatsappClick({
-      flavor1: flavor1?.id || 'unknown',
-      flavor2: flavor2?.id || 'unknown',
-      addons,
-      drinks,
-      totalPrice: BASE_PRICE + addonTotal + drinkTotal
-    });
+    // Track the order with analytics
+    trackWhatsAppOrder(
+      flavor1?.id || flavor2?.id || 'unknown',
+      addons
+    );
     
     window.open(url, "_blank");
   };
 
   const scrollToConfigurator = () => {
-    // Track wizard start
-    analytics.wizardStart();
     configuratorRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 

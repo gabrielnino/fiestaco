@@ -1,0 +1,119 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://fiestaco.today"),
+  title: {
+    default: "Fiestaco | Build Your Match Night Taco Kit",
+    template: "%s | Fiestaco",
+  },
+  description: "Customize your Fiestaco kit with authentic Mexican flavors, fresh add-ons, and ice-cold drinks. Order your perfect taco kit for match night directly via WhatsApp.",
+  keywords: ["Tacos", "Mexican Food", "Taco Kit", "Match Night Food", "Delivery", "Fiestaco"],
+  authors: [{ name: "Fiestaco" }],
+  creator: "Fiestaco",
+  openGraph: {
+    title: "Fiestaco | Build Your Match Night Taco Kit",
+    description: "Customize your Fiestaco kit with authentic Mexican flavors, fresh add-ons, and ice-cold drinks. Order directly via WhatsApp.",
+    url: "https://fiestaco.today",
+    siteName: "Fiestaco",
+    images: [
+      {
+        url: "/images/flavors/al_pastor.webp",
+        width: 800,
+        height: 600,
+        alt: "Fiestaco Al Pastor Tacos - Traditional Mexican marinated pork with pineapple and spices",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fiestaco | Match Night Taco Kit",
+    description: "Order your perfect custom taco kit for match night.",
+    images: ["/images/flavors/al_pastor.webp"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: "Fiestaco",
+  image: "https://fiestaco.today/images/flavors/al_pastor.webp",
+  description: "Authentic Mexican match night taco kits.",
+  servesCuisine: "Mexican",
+  priceRange: "$$",
+  hasMenu: "https://fiestaco.today",
+  url: "https://fiestaco.today",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+1234567890",
+    contactType: "customer service",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <head>
+        {/* Preload critical fonts */}
+        <link
+          rel="preload"
+          href={geistSans.style.fontFamily}
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href={geistMono.style.fontFamily}
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        
+        {/* DNS prefetch for external resources */}
+        <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
+        <link rel="dns-prefetch" href="https://wa.me" />
+        
+        {/* Performance hints */}
+        <meta name="theme-color" content="#0B0B0B" />
+        <meta name="color-scheme" content="dark" />
+        
+        {/* Mobile & Desktop fixes CSS */}
+        <link rel="stylesheet" href="/mobile-desktop-fixes.css" />
+        {/* Steps position fix - back to original hero position */}
+        <link rel="stylesheet" href="/steps-position-fix.css" />
+      </head>
+      <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {children}
+      </body>
+    </html>
+  );
+}
