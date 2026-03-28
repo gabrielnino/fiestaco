@@ -1,4 +1,5 @@
 import { COLORS } from "../lib/constants";
+import { ProductImage } from "./ImageOptimized";
 
 export default function FlavorCard({
   flavor,
@@ -67,10 +68,12 @@ export default function FlavorCard({
           border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
         }}
       >
-        <img 
-          src={flavor.image || "/images/placeholder.png"} 
-          alt={flavor.name} 
-          style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+        <ProductImage 
+          productId={flavor.id}
+          productName={flavor.name}
+          width={80}
+          height={80}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
       </div>
       <span

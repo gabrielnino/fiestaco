@@ -1,0 +1,53 @@
+# Docker Compose para entorno de STAGING
+# NO USAR EN PRODUCCIÓN - Solo para testing
+
+version: '3.8'
+
+services:
+  fiestaco-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fiestaco-staging
+    ports:
+      - "3001:3001"  # Puerto DIFERENTE al de producción (3000)
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
+    networks:
+      - fiestaco-network
+    # Health check
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # Nginx reverse proxy para staging (opcional)
+  nginx-staging:
+    image: nginx:alpine
+    container_name: nginx-fiestaco-staging
+    ports:
+      - "8080:80"  # Acceso alternativo
+    volumes:
+      - ./nginx-staging.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - fiestaco-staging
+    networks:
+      - fiestaco-network
+
+networks:
+  fiestaco-network:
+    driver: bridge
+    name: fiestaco-staging-network

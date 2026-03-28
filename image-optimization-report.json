@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-03-26T19:21:34.876Z",
+  "totalConverted": 18,
+  "totalFailed": 0,
+  "directories": [
+    "public/images/flavors",
+    "public/images/addons",
+    "public"
+  ],
+  "altTextMap": {
+    "al_pastor.png": "Al Pastor Tacos - Traditional Mexican marinated pork with pineapple and spices",
+    "barbacoa_cordero.png": "Barbacoa Lamb Tacos - Slow-cooked lamb with traditional Mexican barbacoa seasoning",
+    "carnitas.png": "Carnitas Tacos - Slow-cooked pulled pork with citrus and herbs",
+    "cauliflower.png": "Cauliflower Tacos - Roasted cauliflower with Mexican spices, vegetarian option",
+    "chipotle_beans.png": "Chipotle Bean Tacos - Smoky chipotle beans with peppers and onions",
+    "fish.png": "Fish Tacos - Beer-battered fish with cabbage slaw and lime crema",
+    "pierna.png": "Pierna Tacos - Slow-roasted pork leg with traditional seasonings",
+    "pollo_mole.png": "Pollo Mole Tacos - Chicken with rich chocolate mole sauce",
+    "pollo_pibil.png": "Pollo Pibil Tacos - Achiote-marinated chicken with citrus",
+    "tinga_veg.png": "Tinga Vegetable Tacos - Spicy shredded vegetables, vegan option",
+    "cheese.png": "Mexican Cheese - Queso fresco and cotija cheese blend",
+    "guacamole.png": "Fresh Guacamole - Hass avocado with lime and cilantro",
+    "salsa.png": "House Salsa - Tomato and chili salsa with fresh herbs",
+    "crema.png": "Mexican Crema - Tangy crema with lime zest",
+    "background.png": "Mexican food background with traditional patterns",
+    "logo.png": "Fiestaco Logo - Skull design with Mexican aesthetic"
+  }
+}

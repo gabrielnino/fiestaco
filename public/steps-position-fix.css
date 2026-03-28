@@ -1,0 +1,168 @@
+/* FIX PARA POSICIONAR STEPS DENTRO DEL HERO SECTION */
+
+/* ===== 1. RESTAURAR POSICIÓN ORIGINAL ===== */
+/* El contenedor de steps debe estar dentro del hero section */
+section:first-of-type {
+  position: relative !important;
+  min-height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+/* Contenedor de steps - posición original */
+section:first-of-type > div[style*="animation:bounce"] {
+  position: absolute !important;
+  bottom: 40px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 100% !important;
+  max-width: 1000px !important;
+  padding: 0 20px !important;
+  z-index: 10 !important;
+  animation: bounce 2s infinite !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+/* ===== 2. QUITAR ESTILOS QUE LO CONVIERTEN EN SECCIÓN SEPARADA ===== */
+/* Remover los estilos de sección separada */
+section:first-of-type > div[style*="animation:bounce"] {
+  border-radius: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ===== 3. OPTIMIZAR PARA MÓVILES ===== */
+@media (max-width: 768px) {
+  section:first-of-type {
+    min-height: 100vh !important;
+    padding-bottom: 120px !important; /* Espacio para los steps */
+  }
+  
+  section:first-of-type > div[style*="animation:bounce"] {
+    bottom: 20px !important;
+    padding: 0 16px !important;
+    width: 100% !important;
+  }
+  
+  /* Grid responsive para móviles */
+  div[style*="grid-template-columns:repeat(3, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  /* Cards más compactas en móviles */
+  div[style*="border-radius:16px;padding:24px 16px"] {
+    padding: 16px 12px !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(249, 115, 22, 0.3) !important;
+  }
+}
+
+/* ===== 4. TABLETS ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  section:first-of-type > div[style*="animation:bounce"] {
+    bottom: 30px !important;
+    max-width: 90% !important;
+  }
+  
+  div[style*="grid-template-columns:repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+  
+  /* Último step centrado */
+  div[style*="grid-template-columns:repeat(3, 1fr)"] > div:nth-child(3) {
+    grid-column: span 2 !important;
+    max-width: 50% !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* ===== 5. DESKTOP ===== */
+@media (min-width: 1025px) {
+  section:first-of-type > div[style*="animation:bounce"] {
+    bottom: 60px !important;
+  }
+  
+  div[style*="grid-template-columns:repeat(3, 1fr)"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 24px !important;
+  }
+}
+
+/* ===== 6. ANIMACIÓN BOUNCE ORIGINAL ===== */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+/* ===== 7. ASEGURAR QUE EL HERO TENGA ESPACIO SUFICIENTE ===== */
+/* El hero section necesita altura suficiente para contener todo */
+section:first-of-type {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+/* Contenido principal del hero (título, etc) */
+section:first-of-type > div:not([style*="animation:bounce"]) {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+/* ===== 8. LIMPIAR FIXES ANTERIORES QUE CAUSARON EL PROBLEMA ===== */
+/* Remover cualquier estilo que haya convertido esto en sección separada */
+section:first-of-type > div[style*="animation:bounce"] {
+  position: absolute !important; /* Esto es clave */
+  background: transparent !important;
+}
+
+/* Asegurar que no haya márgenes/padding que lo empujen abajo */
+section:first-of-type {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ===== 9. VISIBILIDAD Y Z-INDEX ===== */
+/* Los steps deben estar sobre el fondo pero bajo el contenido principal */
+section:first-of-type > div[style*="animation:bounce"] {
+  z-index: 5 !important;
+}
+
+section:first-of-type > div:not([style*="animation:bounce"]) {
+  z-index: 10 !important;
+}
+
+/* ===== 10. RESPONSIVE FINAL ===== */
+/* Asegurar que en pantallas muy pequeñas aún se vea bien */
+@media (max-width: 480px) {
+  section:first-of-type {
+    min-height: 110vh !important; /* Un poco más de altura */
+    padding-bottom: 100px !important;
+  }
+  
+  section:first-of-type > div[style*="animation:bounce"] {
+    bottom: 10px !important;
+  }
+  
+  div[style*="border-radius:16px;padding:24px 16px"] {
+    padding: 14px 10px !important;
+  }
+}

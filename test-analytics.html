@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analytics Test</title>
+    <!-- Test Plausible script inclusion -->
+    <script
+        defer
+        data-domain="fiestaco.today"
+        src="https://plausible.io/js/script.js"
+    ></script>
+</head>
+<body>
+    <h1>Analytics Test Page</h1>
+    <p>Check browser console for Plausible initialization.</p>
+    
+    <button onclick="testEvent()">Test Event Tracking</button>
+    
+    <script>
+        function testEvent() {
+            if (window.plausible) {
+                window.plausible('Test Event', {
+                    props: { test: 'success' }
+                });
+                alert('Event tracked successfully! Check Plausible dashboard.');
+            } else {
+                alert('Plausible not loaded. Check console.');
+            }
+        }
+        
+        // Log Plausible status
+        console.log('Plausible loaded:', typeof window.plausible !== 'undefined');
+        console.log('Window.plausible:', window.plausible);
+    </script>
+</body>
+</html>

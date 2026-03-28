@@ -1,0 +1,57 @@
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
+import path from 'path';
+
+let db: any = null;
+
+export async function getDb() {
+  if (!db) {
+    const dbPath = path.join(process.cwd(), 'data', 'analytics.db');
+    console.log(`📊 Inicializando SQLite en: ${dbPath}`);
+    
+    db = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
+    
+    // Inicializar esquema
+    await db.exec(`
+      CREATE TABLE IF NOT EXISTS events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        session_id TEXT NOT NULL,
+        event_name TEXT NOT NULL,
+        page_path TEXT NOT NULL,
+        metadata TEXT,
+        user_agent TEXT,
+        referrer TEXT,
+        ip_address TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      );
+      
+      CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id);
+      CREATE INDEX IF NOT EXISTS idx_events_created ON events(created_at);
+      CREATE INDEX IF NOT EXISTS idx_events_name ON events(event_name);
+    `);
+    
+    console.log('✅ Base de datos de analytics inicializada');
+  }
+  return db;
+}
+
+// Función para obtener estadísticas básicas
+export async function getBasicStats(days: number = 7) {
+  const db = await getDb();
+  
+  const stats = await db.get(`
+    SELECT 
+      COUNT(*) as total_events,
+      COUNT(DISTINCT session_id) as unique_sessions,
+      SUM(CASE WHEN event_name = 'page_view' THEN 1 ELSE 0 END) as page_views,
+      SUM(CASE WHEN event_name = 'wizard_start' THEN 1 ELSE 0 END) as wizard_starts,
+      SUM(CASE WHEN event_name = 'whatsapp_click' THEN 1 ELSE 0 END) as whatsapp_clicks
+    FROM events
+    WHERE created_at >= DATETIME('now', ?)
+  `, [`-${days} days`]);
+  
+  return stats;
+}
