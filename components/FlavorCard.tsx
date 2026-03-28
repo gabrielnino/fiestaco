@@ -16,6 +16,7 @@ export default function FlavorCard({
   return (
     <button
       onClick={() => !disabled && onSelect(flavor)}
+      className="mobile-padding-x-small"
       style={{
         background: selected ? `linear-gradient(135deg, ${COLORS.orange}22, ${COLORS.magenta}22)` : COLORS.darkCard,
         border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
@@ -27,6 +28,8 @@ export default function FlavorCard({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        flex: 1, // Added to ensure buttons stretch in grid
+        minWidth: 140, // Increased minWidth slightly
         gap: 8,
         position: "relative",
         boxShadow: selected ? `0 0 20px ${COLORS.orange}44` : "none",

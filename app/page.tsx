@@ -142,13 +142,14 @@ export default function FiestaCo() {
       }}
     >
       <header
+        className="mobile-header-spacing"
         style={{
           position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           zIndex: 100,
-          padding: "10px 32px",
+          padding: "16px 32px",
           background: scrolled ? "rgba(11,11,11,0.95)" : "rgba(0,0,0,0.4)",
           backdropFilter: "blur(12px)",
           transition: "all 0.3s",
@@ -160,12 +161,12 @@ export default function FiestaCo() {
       >
         {/* Logo + Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <SkullLogo size={72} />
+          <SkullLogo size={54} />
           <span
             style={{
               fontFamily: "'Oswald', sans-serif",
               fontWeight: 700,
-              fontSize: 22,
+              fontSize: 20,
               letterSpacing: 1,
             }}
           >
@@ -173,8 +174,6 @@ export default function FiestaCo() {
             <span style={{ color: COLORS.orange }}>CO</span>
           </span>
         </div>
-
-
 
         {/* Lang + Social + CTA */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -198,9 +197,9 @@ export default function FiestaCo() {
                 cursor: "pointer",
                 fontFamily: "'Oswald', sans-serif",
                 fontWeight: 700,
-                fontSize: 12,
+                fontSize: 11,
                 letterSpacing: 1,
-                padding: "8px 14px",
+                padding: "6px 12px",
                 transition: "all 0.2s",
               }}
             >
@@ -217,9 +216,9 @@ export default function FiestaCo() {
                 cursor: "pointer",
                 fontFamily: "'Oswald', sans-serif",
                 fontWeight: 700,
-                fontSize: 12,
+                fontSize: 11,
                 letterSpacing: 1,
-                padding: "8px 14px",
+                padding: "6px 12px",
                 transition: "all 0.2s",
               }}
             >
@@ -227,16 +226,15 @@ export default function FiestaCo() {
             </button>
           </div>
 
-          {/* Social Icons in Header */}
-          <a href="mailto:hello@fiestaco.today" title="hello@fiestaco.today" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
-          </a>
-          <a href="https://instagram.com/fiestacotoday" target="_blank" rel="noreferrer" title="@fiestacotoday" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.magenta)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg>
-          </a>
-          <a href="https://tiktok.com/@fiestacotoday" target="_blank" rel="noreferrer" title="@fiestacotoday" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.turquoise)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" /></svg>
-          </a>
+          {/* Social Icons - Hidden on very small screens or made smaller */}
+          <div className="mobile-hide" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <a href="mailto:hello@fiestaco.today" title="hello@fiestaco.today" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+            </a>
+            <a href="https://instagram.com/fiestacotoday" target="_blank" rel="noreferrer" title="@fiestacotoday" style={{ color: "#888", transition: "color 0.2s", display: "flex" }} onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.magenta)} onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" /></svg>
+            </a>
+          </div>
 
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -247,9 +245,9 @@ export default function FiestaCo() {
               color: "#fff",
               fontFamily: "'Oswald', sans-serif",
               fontWeight: 600,
-              fontSize: 13,
+              fontSize: 12,
               letterSpacing: 1,
-              padding: "8px 16px",
+              padding: "8px 14px",
               borderRadius: 999,
               textDecoration: "none",
               border: "none",
@@ -261,6 +259,7 @@ export default function FiestaCo() {
       </header>
 
       <section
+        className="hero-container"
         style={{
           position: "relative",
           minHeight: "100vh",
@@ -269,8 +268,8 @@ export default function FiestaCo() {
           alignItems: "center",
           justifyContent: "center",
           textAlign: "center",
-          padding: "100px 20px 60px",
-          overflow: "hidden",
+          padding: "120px 20px 60px",
+          overflow: "visible",
         }}
       >
         {/* Background photo */}
@@ -282,6 +281,7 @@ export default function FiestaCo() {
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
+            zIndex: 0,
           }}
         />
         {/* Dark overlay for text readability */}
@@ -290,18 +290,20 @@ export default function FiestaCo() {
             position: "absolute",
             inset: 0,
             background: "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.72) 60%, rgba(11,11,11,0.95) 100%)",
+            zIndex: 1,
           }}
         />
 
-        <div style={{ position: "absolute", top: 80, right: 20, opacity: 0.18 }}>
+        <div className="mobile-hide" style={{ position: "absolute", top: 80, right: 20, opacity: 0.18, zIndex: 1 }}>
           <SkullLogo size={120} />
         </div>
-        <div style={{ position: "absolute", bottom: 100, left: 10, opacity: 0.12 }}>
+        <div className="mobile-hide" style={{ position: "absolute", bottom: 100, left: 10, opacity: 0.12, zIndex: 1 }}>
           <SkullLogo size={90} />
         </div>
 
-        <div style={{ position: "relative", zIndex: 2, maxWidth: 560, paddingTop: 80 }}>
+        <div style={{ position: "relative", zIndex: 2, maxWidth: 560, margin: "auto 0" }}>
           <h1
+            className="hero-text-mobile"
             style={{
               fontFamily: "'Bebas Neue', sans-serif",
               fontSize: "clamp(48px, 9vw, 84px)",
@@ -354,6 +356,7 @@ export default function FiestaCo() {
               boxShadow: `0 8px 32px ${COLORS.orange}55`,
               textTransform: "uppercase",
               transition: "transform 0.15s, box-shadow 0.15s",
+              marginBottom: 40,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "scale(1.04)";
@@ -367,23 +370,25 @@ export default function FiestaCo() {
             {t.heroCTA}
           </button>
         </div>
+
+        {/* How It Works - Now part of flow on mobile */}
         <div
           style={{
-            position: "absolute",
-            bottom: 30,
-            left: "50%",
-            transform: "translateX(-50%)",
-            animation: "bounce 2s infinite",
+            position: "relative",
+            zIndex: 2,
+            width: "100%",
+            maxWidth: 800,
+            marginTop: 40,
           }}
         >
-          <div style={{ color: "#444", fontSize: 20 }}>↓</div>
+          <div className="mobile-hide" style={{ color: "#444", fontSize: 20, animation: "bounce 2s infinite", marginBottom: 10 }}>↓</div>
           <h2
             style={{
               fontFamily: "'Oswald', sans-serif",
               fontWeight: 700,
               fontSize: "clamp(22px, 4vw, 32px)",
               textAlign: "center",
-              marginBottom: 40,
+              marginBottom: 30,
               color: COLORS.bone,
             }}
           >
@@ -391,6 +396,7 @@ export default function FiestaCo() {
           </h2>
 
           <div
+            className="mobile-grid-1"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
@@ -439,6 +445,7 @@ export default function FiestaCo() {
             ].map((item, i) => (
               <div
                 key={i}
+                className="step-column"
                 style={{
                   background: COLORS.darkCard,
                   border: `1px solid ${COLORS.cardBorder}`,
@@ -466,7 +473,7 @@ export default function FiestaCo() {
             ))}
           </div>
         </div>
-        <style>{`@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }`}</style>
+        <style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }`}</style>
       </section>
 
       {/* Problem + Product sections side by side like mockup */}
@@ -482,7 +489,7 @@ export default function FiestaCo() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          padding: "100px 20px 40px",
+          padding: "120px 20px 60px", // Increased top padding
           overflowX: "hidden",
           overflowY: "auto",
         }}
@@ -776,6 +783,7 @@ export default function FiestaCo() {
           </div>
 
           <div
+            className="mobile-grid-1"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
@@ -824,20 +832,21 @@ export default function FiestaCo() {
 
       <footer
         style={{
-          padding: "32px 32px 24px",
+          padding: "40px 20px 24px",
           borderTop: `1px solid ${COLORS.cardBorder}`,
           background: "#0a0a0a",
         }}
       >
         {/* Top row: Logo + Social */}
         <div
+          className="mobile-stack"
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
-            gap: 16,
-            marginBottom: 20,
+            gap: 24,
+            marginBottom: 30,
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
