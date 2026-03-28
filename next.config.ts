@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Output configuration for Docker
   output: 'standalone',
+  serverExternalPackages: ['sqlite3'],
   
   images: {
     formats: ['image/webp', 'image/avif'],

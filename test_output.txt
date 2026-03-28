@@ -1,0 +1,59 @@
+≡ƒº¬ PRUEBA EXHAUSTIVA DEL API DE ANALYTICS
+========================================
+
+≡ƒôï 1. PRUEBAS DEL ENDPOINT /api/analytics (POST)
+----------------------------------------------
+Γ£à Evento b├ísico (page_view): 200 (esperado 200)
+Γ£à Evento con metadata: 200 (esperado 200)
+Γ£à Evento wizard: wizard_start: 200 (esperado 200)
+Γ£à Evento wizard: step_visit: 200 (esperado 200)
+Γ£à Evento wizard: addon_select: 200 (esperado 200)
+Γ£à Evento wizard: drink_select: 200 (esperado 200)
+Γ£à Evento wizard: kit_complete: 200 (esperado 200)
+Γ£à Evento wizard: whatsapp_click: 200 (esperado 200)
+Γ£à Sin sessionId (error): 400 (esperado 400)
+Γ£à Sin eventName (error): 400 (esperado 400)
+Γ£à Sin pagePath (error): 400 (esperado 400)
+Γ£à Sin Content-Type (error): 400 (esperado 400)
+
+≡ƒöÉ 2. PRUEBAS DEL ENDPOINT /api/analytics (GET)
+---------------------------------------------
+Γ£à GET sin token (error): 401 (esperado 401)
+Γ£à GET con token incorrecto (error): 403 (esperado 403)
+Γ£à GET con token b├ísico: 200 (esperado 200)
+Γ£à GET con token admin: 200 (esperado 200)
+
+≡ƒôê 3. PRUEBAS DE VOLUMEN Y ESTR├ëS
+--------------------------------
+Γ£à Evento paralelo 1: 200 (esperado 200)
+Γ£à Evento paralelo 2: 200 (esperado 200)
+Γ£à Evento paralelo 5: 200 (esperado 200)
+Γ£à Evento paralelo 3: 200 (esperado 200)
+Γ£à Evento paralelo 4: 200 (esperado 200)
+Γ£à 5 eventos enviados en paralelo
+Γ£à Evento con metadata extensa: 200 (esperado 200)
+
+≡ƒöì 4. PRUEBAS DE VALIDACI├ôN DE DATOS
+-----------------------------------
+Γ£à Metadata tipo string: 200 (esperado 200)
+Γ£à Metadata tipo number: 200 (esperado 200)
+Γ£à Metadata tipo boolean: 200 (esperado 200)
+Γ£à Metadata tipo null: 200 (esperado 200)
+Γ£à Metadata tipo array: 200 (esperado 200)
+Γ£à Metadata tipo object: 200 (esperado 200)
+
+≡ƒôè 5. PRUEBAS DE ENDPOINTS RELACIONADOS
+-------------------------------------
+Γ£à Health check: 200 (esperado 200)
+Γ£à Dashboard (sin auth web): 200 (esperado 200)
+Γ£à Sitemap: 200 (esperado 200)
+Γ£à Robots.txt: 200 (esperado 200)
+
+≡ƒôï RESUMEN FINAL DE PRUEBAS
+==========================
+Γ£à Pruebas pasadas: 32
+Γ¥î Pruebas falladas: 0
+≡ƒôè Total pruebas: 32
+≡ƒÄ» Tasa de ├⌐xito: 100.0%
+
+≡ƒÄë ┬íTODAS LAS PRUEBAS PASARON EXITOSAMENTE!

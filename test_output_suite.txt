@@ -1,0 +1,65 @@
+≡ƒº¬ SUITE DE PRUEBAS EXHAUSTIVAS - API ANALYTICS
+=============================================
+
+Γ£à TC-001: Caso v├ílido m├¡nimo (todos los campos requeridos)
+Γ£à TC-002: Caso v├ílido completo (con metadata)
+Γ£à TC-003: Campo sessionId faltante
+Γ£à TC-004: Campo eventName faltante
+Γ£à TC-005: Campo pagePath faltante
+Γ£à TC-006: sessionId = null
+Γ£à TC-007: sessionId = string vac├¡o
+Γ£à TC-008: sessionId = solo espacios
+Γ¥î TC-009: sessionId como n├║mero (tipo incorrecto)
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["sessionId must be a string"]}
+Γ¥î TC-010: eventName como booleano (tipo incorrecto)
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["eventName must be a string"]}
+Γ¥î TC-011: sessionId longitud excesiva (10k caracteres)
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["sessionId cannot exceed 255 characters"]}
+Γ¥î TC-012: Caracteres especiales y posible inyecci├│n
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["sessionId contains invalid characters","eventName can only contain letters, numbers, and underscores"]}
+Γ¥î TC-013: metadata como string (deber├¡a ser objeto)
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["metadata must be an object"]}
+Γ¥î TC-014: metadata extremadamente grande (1MB)
+   Esperado: 200, Obtenido: 400
+   Respuesta: {"error":"Validation failed","details":["metadata cannot exceed 5000 characters when serialized"]}
+Γ£à TC-015: Sin Content-Type header
+Γ£à TC-016: Content-Type incorrecto (text/plain)
+Γ¥î TC-017: JSON malformado
+   Esperado: 500, Obtenido: 400
+   Respuesta: {"error":"Invalid JSON format"}
+Γ¥î TC-018: Body vac├¡o
+   Esperado: 500, Obtenido: 400
+   Respuesta: {"error":"Request body is empty"}
+Γ£à TC-019: M├⌐todo HTTP incorrecto (PUT)
+Γ£à TC-020: Ruta incorrecta
+
+≡ƒôè REPORTE DE PRUEBAS
+===================
+Γ£à Pasadas: 12
+Γ¥î Falladas: 8
+≡ƒôè Total: 20
+≡ƒÄ» Tasa de ├⌐xito: 60.0%
+
+≡ƒÜ¿ PROBLEMAS CR├ìTICOS IDENTIFICADOS:
+==================================
+ΓÇó TC-009: sessionId como n├║mero (tipo incorrecto)
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-010: eventName como booleano (tipo incorrecto)
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-011: sessionId longitud excesiva (10k caracteres)
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-012: Caracteres especiales y posible inyecci├│n
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-013: metadata como string (deber├¡a ser objeto)
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-014: metadata extremadamente grande (1MB)
+  Esperado: 200, Obtenido: 400
+ΓÇó TC-017: JSON malformado
+  Esperado: 500, Obtenido: 400
+ΓÇó TC-018: Body vac├¡o
+  Esperado: 500, Obtenido: 400

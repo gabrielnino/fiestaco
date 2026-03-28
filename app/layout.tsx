@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
 
@@ -109,22 +110,27 @@ export default function RootLayout({
         <link rel="stylesheet" href="/steps-position-fix.css" />
         
         {/* Plausible Analytics - Privacy-focused, GDPR-compliant, no cookies needed */}
-        <script
+        <Script
           defer
           data-domain="fiestaco.today"
           src="https://plausible.io/js/script.js"
+          strategy="afterInteractive"
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <script
+        <Script
+          id="json-ld-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          strategy="beforeInteractive"
         />
         {children}
         <AnalyticsProvider />
         
         {/* Analytics event tracking for custom interactions */}
-        <script
+        <Script
+          id="plausible-custom-events"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               // Track custom events when DOM is ready
@@ -140,7 +146,7 @@ export default function RootLayout({
                       }
                     });
                   }
-                  
+
                   // Track taco flavor selections
                   const flavorButton = e.target.closest('button[data-flavor], [data-flavor]');
                   if (flavorButton) {
@@ -151,7 +157,7 @@ export default function RootLayout({
                       });
                     }
                   }
-                  
+
                   // Track add-on selections
                   const addonButton = e.target.closest('button[data-addon], [data-addon]');
                   if (addonButton) {
@@ -163,7 +169,7 @@ export default function RootLayout({
                     }
                   }
                 });
-                
+
                 // Track form submissions
                 document.addEventListener('submit', function(e) {
                   if (e.target.tagName === 'FORM') {
@@ -175,18 +181,18 @@ export default function RootLayout({
                     });
                   }
                 });
-                
+
                 // Track scroll depth
                 let scrollTracked25 = false;
                 let scrollTracked50 = false;
                 let scrollTracked75 = false;
                 let scrollTracked100 = false;
-                
+
                 window.addEventListener('scroll', function() {
                   const scrollTop = window.scrollY;
                   const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
                   const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-                  
+
                   if (scrollPercent >= 25 && !scrollTracked25) {
                     window.plausible('Scroll Depth', { props: { depth: '25%' } });
                     scrollTracked25 = true;

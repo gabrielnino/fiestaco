@@ -1,14 +1,23 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 import path from 'path';
+import fs from 'fs';
 
 let db: any = null;
 
 export async function getDb() {
   if (!db) {
-    const dbPath = path.join(process.cwd(), 'data', 'analytics.db');
+    const dbDir = path.join(process.cwd(), 'data');
+    const dbPath = path.join(dbDir, 'analytics.db');
+
+    // Ensure the data directory exists (handles first-time start or fresh clone)
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+      console.log(`📁 Directorio de datos creado: ${dbDir}`);
+    }
+
     console.log(`📊 Inicializando SQLite en: ${dbPath}`);
-    
+
     db = await open({
       filename: dbPath,
       driver: sqlite3.Database

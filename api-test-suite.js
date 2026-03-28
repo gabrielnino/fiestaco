@@ -2,7 +2,7 @@
 const http = require('http');
 
 const API_HOST = 'localhost';
-const API_PORT = 3020;
+const API_PORT = 3010;
 const BASE_URL = `http://${API_HOST}:${API_PORT}`;
 
 console.log('🧪 SUITE DE PRUEBAS EXHAUSTIVAS - API ANALYTICS');
