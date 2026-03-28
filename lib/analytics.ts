@@ -152,22 +152,6 @@ export const analytics = {
     trackEvent('error', { type: errorType, details }),
 };
 
-// Inicializar analytics automáticamente
-if (typeof window !== 'undefined') {
-  // Trackear page view después de un pequeño delay
-  setTimeout(() => {
-    analytics.pageView();
-  }, 100);
-  
-  // Configurar tracking de salida
-  window.addEventListener('beforeunload', () => {
-    analytics.sessionEnd();
-  });
-  
-  // Trackear cambios de visibilidad (pestaña inactiva)
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-      analytics.sessionEnd();
-    }
-  });
-}
+// NOTE: Page view tracking and session lifecycle events are handled
+// exclusively by the AnalyticsProvider component (components/AnalyticsProvider.tsx)
+// to avoid double-firing events. Do not add auto-initialization here.
