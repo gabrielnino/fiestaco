@@ -48,7 +48,7 @@ export default function AnalyticsDashboard() {
   // Verificar autenticación al cargar
   useEffect(() => {
     const token = localStorage.getItem('fiestaco_dashboard_token');
-    if (token === 'fiestaco-admin-2024') {
+    if (token === 'fiestaco-dev') {
       setAuthenticated(true);
       fetchStats();
     }
@@ -57,7 +57,7 @@ export default function AnalyticsDashboard() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === 'fiestaco2024') {
-      localStorage.setItem('fiestaco_dashboard_token', 'fiestaco-admin-2024');
+      localStorage.setItem('fiestaco_dashboard_token', 'fiestaco-dev');
       setAuthenticated(true);
       fetchStats();
     } else {
@@ -70,7 +70,7 @@ export default function AnalyticsDashboard() {
       setLoading(true);
       const response = await fetch('/api/analytics/dashboard', {
         headers: {
-          'Authorization': 'Bearer fiestaco-admin-2024'
+          'Authorization': 'Bearer fiestaco-dev'
         }
       });
       
