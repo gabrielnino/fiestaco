@@ -1,0 +1,33 @@
+{
+  "basePrice": 45,
+  "addons": {
+    "cheese": 12,
+    "guac": 12,
+    "pico": 12,
+    "crema": 8,
+    "jalaps": 8,
+    "salsa-verde": 8
+  },
+  "drinks": {
+    "corona-6": 17.31,
+    "budweiser-24": 55.95,
+    "pacifico-6": 17.09
+  },
+  "flavors": {
+    "al-pastor": 0,
+    "chorizo": 0,
+    "pierna": 0,
+    "pollo-pibil": 0,
+    "chipotle-beans": 0,
+    "elote": 0,
+    "lengua": 5,
+    "carnitas": 5,
+    "pollo-mole": 5,
+    "picadillo": 5,
+    "barbacoa-cordero": 5,
+    "cauliflower": 5,
+    "tinga-veg": 5,
+    "shrimp": 5,
+    "fish": 5
+  }
+}

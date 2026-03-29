@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Image from "next/image";
 import SkullLogo from "../components/SkullLogo";
 import HeroBackground from "../components/HeroBackground";
 import SimpleAudioPlayer from "../components/SimpleAudioPlayer";
 import T from "./translations.json";
 
-import { COLORS, FLAVORS, ADDONS, DRINKS, BASE_PRICE, WHATSAPP_NUMBER } from "../lib/constants";
+import { COLORS, FLAVORS as DEFAULT_FLAVORS, ADDONS as DEFAULT_ADDONS, DRINKS as DEFAULT_DRINKS, BASE_PRICE as DEFAULT_BASE_PRICE, WHATSAPP_NUMBER } from "../lib/constants";
 import Step1Flavor from "../components/Step1Flavor";
 import Step2Flavor from "../components/Step2Flavor";
 import Step3Addons from "../components/Step3Addons";
@@ -18,6 +18,34 @@ import { WizardContext, WizardState } from "../lib/wizard-context";
 export default function FiestaCo() {
   const [lang, setLang] = useState<"en" | "es">("en");
   const t: any = T[lang];
+
+  const [dynamicPrices, setDynamicPrices] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/config/prices')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setDynamicPrices(data);
+      })
+      .catch((e) => console.log('Could not load prices', e));
+  }, []);
+
+  const FLAVORS = useMemo(() => DEFAULT_FLAVORS.map(f => ({
+    ...f,
+    surcharge: dynamicPrices ? (dynamicPrices.flavors[f.id] > 0 ? dynamicPrices.flavors[f.id] : undefined) : f.surcharge
+  })), [dynamicPrices]);
+
+  const ADDONS = useMemo(() => DEFAULT_ADDONS.map(a => ({
+    ...a,
+    price: dynamicPrices ? (dynamicPrices.addons[a.id] ?? a.price) : a.price
+  })), [dynamicPrices]);
+
+  const DRINKS = useMemo(() => DEFAULT_DRINKS.map(d => ({
+    ...d,
+    price: dynamicPrices ? (dynamicPrices.drinks[d.id] ?? d.price) : d.price
+  })), [dynamicPrices]);
+
+  const BASE_PRICE = dynamicPrices ? dynamicPrices.basePrice : DEFAULT_BASE_PRICE;
 
   const [flavor1, setFlavor1] = useState<any>(null);
   const [flavor2, setFlavor2] = useState<any>(null);

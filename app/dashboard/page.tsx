@@ -302,7 +302,8 @@ export default function AnalyticsDashboard() {
           </h1>
           <p style={{ color: C.muted, fontSize: 13, margin: 0 }}>Actualizado: {lastUpdated}</p>
         </div>
-        <div style={{ display: 'flex', gap: 10 }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <button onClick={() => router.push('/dashboard/prices')} style={{ padding: '8px 16px', background: `linear-gradient(135deg, ${C.orange}, ${C.magenta})`, color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>⚙️ Precios</button>
           <button onClick={handleExportCSV} style={{ padding: '8px 16px', background: '#1a2a1a', color: C.green, border: `1px solid ${C.green}44`, borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>📊 Exportar CSV</button>
           <button onClick={fetchStats} style={{ padding: '8px 16px', background: '#1e1e1e', color: C.text, border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>↺ Actualizar</button>
           <button onClick={handleLogout} style={{ padding: '8px 16px', background: 'transparent', color: C.muted, border: `1px solid ${C.border}`, borderRadius: 8, cursor: 'pointer', fontSize: 13 }}>Salir</button>
