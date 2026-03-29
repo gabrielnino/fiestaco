@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import SkullLogo from "../components/SkullLogo";
 import HeroBackground from "../components/HeroBackground";
@@ -13,6 +13,7 @@ import Step2Flavor from "../components/Step2Flavor";
 import Step3Addons from "../components/Step3Addons";
 import Step4Drinks from "../components/Step4Drinks";
 import { analytics } from "../lib/analytics";
+import { WizardContext, WizardState } from "../lib/wizard-context";
 
 export default function FiestaCo() {
   const [lang, setLang] = useState<"en" | "es">("en");
@@ -28,52 +29,58 @@ export default function FiestaCo() {
 
   const configuratorRef = useRef<HTMLElement>(null);
 
+  // ── WizardContext: shared ref for AnalyticsProvider abandon detection ──
+  const wizardStateRef = useRef<WizardState>({
+    started: false,
+    converted: false,
+    currentStep: 0,
+    flavor1: null,
+    flavor2: null,
+    addonsCount: 0,
+    currentPrice: 0,
+  });
+  const updateWizard = useCallback((update: Partial<WizardState>) => {
+    wizardStateRef.current = { ...wizardStateRef.current, ...update };
+  }, []);
+  const wizardContextValue = { stateRef: wizardStateRef, updateWizard };
+
   const scrollToStepContainer = () => {
     configuratorRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleFlavor1Select = (f: any) => {
     setFlavor1(f);
-    // Track flavor selection and step completion
-    if (f?.id) {
-      analytics.flavorSelect(f.id);
-    }
+    if (f?.id) analytics.flavorSelect(f.id);
     analytics.stepVisit(1);
-    setTimeout(() => {
-      setCurrentStep(2);
-      scrollToStepContainer();
-    }, 150);
+    updateWizard({ started: true, currentStep: 1, flavor1: f?.id || null });
+    setTimeout(() => { setCurrentStep(2); scrollToStepContainer(); }, 150);
   };
 
   const handleFlavor2Select = (f: any) => {
     setFlavor2(f);
-    // Track flavor selection and step completion
-    if (f?.id) {
-      analytics.flavorSelect(f.id);
-    }
+    if (f?.id) analytics.flavorSelect(f.id);
     analytics.stepVisit(2);
-    setTimeout(() => {
-      setCurrentStep(3);
-      scrollToStepContainer();
-    }, 150);
+    updateWizard({ currentStep: 2, flavor2: f?.id || null });
+    setTimeout(() => { setCurrentStep(3); scrollToStepContainer(); }, 150);
   };
 
   const handleNextAddons = () => {
-    // Track step completion
     analytics.stepVisit(3);
-    setTimeout(() => {
-      setCurrentStep(4);
-      scrollToStepContainer();
-    }, 150);
+    updateWizard({ currentStep: 3, addonsCount: addons.length });
+    setTimeout(() => { setCurrentStep(4); scrollToStepContainer(); }, 150);
   };
 
   const handleNextDrinks = () => {
-    // Track step completion
     analytics.stepVisit(4);
-    setTimeout(() => {
-      setCurrentStep(5);
-      scrollToStepContainer();
-    }, 150);
+    updateWizard({ currentStep: 4 });
+    setTimeout(() => { setCurrentStep(5); scrollToStepContainer(); }, 150);
+  };
+
+  const handleStepBack = () => {
+    const prevStep = currentStep - 1;
+    analytics.stepBack(currentStep);
+    setCurrentStep(prevStep);
+    updateWizard({ currentStep: prevStep });
   };
 
   useEffect(() => {
@@ -94,19 +101,6 @@ export default function FiestaCo() {
     document.head.appendChild(link);
   }, []);
 
-  // Track kit customization when selections change
-  useEffect(() => {
-    const flavorCount = (flavor1 ? 1 : 0) + (flavor2 ? 1 : 0);
-    if (flavorCount > 0 || addons.length > 0 || drinks.length > 0) {
-      analytics.kitComplete({
-        flavor1: flavor1?.id || 'none',
-        flavor2: flavor2?.id || 'none',
-        addons,
-        drinks,
-        totalPrice: BASE_PRICE + addonTotal + drinkTotal
-      });
-    }
-  }, [flavor1, flavor2, addons, drinks]);
 
   const visibleFlavors = showMoreFlavors ? FLAVORS : FLAVORS.slice(0, 6);
 
@@ -143,6 +137,12 @@ export default function FiestaCo() {
   const flavorTotal = (flavor1?.surcharge || 0) + (flavor2?.surcharge || 0);
   const totalPrice = BASE_PRICE + addonTotal + drinkTotal + flavorTotal;
 
+  // Sync kit price to wizard context whenever selections change
+  // (placed here so addonTotal / drinkTotal / flavorTotal are already declared)
+  useEffect(() => {
+    updateWizard({ addonsCount: addons.length, currentPrice: totalPrice });
+  }, [flavor1, flavor2, addons, drinks, totalPrice, updateWizard]);
+
   const buildWhatsAppMessage = () => {
     const f1 = flavor1?.name || "—";
     const f2 = flavor2?.name || "—";
@@ -166,28 +166,34 @@ export default function FiestaCo() {
   const handleOrder = () => {
     const msg = buildWhatsAppMessage();
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const orderValue = BASE_PRICE + addonTotal + drinkTotal + flavorTotal;
 
-    // Track the order with our analytics
+    // Mark as converted so AnalyticsProvider won't fire wizard_abandon
+    updateWizard({ converted: true, currentStep: 5, currentPrice: orderValue });
+
+    // Track conversion with full revenue data (Cambio 1)
     analytics.whatsappClick({
       flavor1: flavor1?.id || 'unknown',
       flavor2: flavor2?.id || 'unknown',
       addons,
       drinks,
-      totalPrice: BASE_PRICE + addonTotal + drinkTotal
+      order_value: orderValue,
+      combo: `${flavor1?.id || 'none'}+${flavor2?.id || 'none'}`,
     });
 
     window.open(url, "_blank");
   };
 
   const scrollToConfigurator = () => {
-    // Track wizard start
     analytics.wizardStart();
+    updateWizard({ started: true, currentStep: 1 });
     configuratorRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const kitReady = Boolean(flavor1 && flavor2);
 
   return (
+    <WizardContext.Provider value={wizardContextValue}>
     <main
       style={{
         background: COLORS.black,
@@ -568,10 +574,10 @@ export default function FiestaCo() {
             ))}
           </div>
 
-          {/* Optional Back Button */}
+          {/* Back Button — now tracks step_back event */}
           {currentStep > 1 && (
             <button
-              onClick={() => setCurrentStep(currentStep - 1)}
+              onClick={handleStepBack}
               style={{
                 background: "transparent",
                 border: "none",
@@ -1046,5 +1052,6 @@ export default function FiestaCo() {
       {/* Audio Player */}
       <SimpleAudioPlayer />
     </main>
+    </WizardContext.Provider>
   );
-}
+}
