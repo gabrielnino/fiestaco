@@ -1,0 +1,63 @@
+╔════════════════════════════════════════════╗
+║   FIESTACO BI ANALYTICS TEST SUITE         ║
+╚════════════════════════════════════════════╝
+
+📱 SCENARIO 1 — Instagram user completes order
+
+🎵 SCENARIO 2 — TikTok user abandons at step 3 (add-ons)
+
+🔄 SCENARIO 3 — Direct traffic, step_back, then converts
+
+📊 SCENARIO 4 — Dashboard API shape & BI data validation
+
+🔒 AUTH — Dashboard security
+
+╔════════════════════════════════════════════╗
+║   RESULTS                                  ║
+╚════════════════════════════════════════════╝
+  ✅ page_view fires 200
+  ✅ wizard_start fires 200
+  ✅ flavor_select (al-pastor) fires 200
+  ✅ step_visit 1 fires 200
+  ✅ flavor_select (chorizo) fires 200
+  ✅ step_visit 2 fires 200
+  ✅ addon_select fires 200
+  ✅ drink_select fires 200
+  ✅ whatsapp_click with order_value fires 200
+  ✅ order_value is correct (74.31)
+  ✅ wizard_abandon at step 3 fires 200
+  ✅ step_back fires 200
+  ✅ Direct user converts after step_back — 200
+  ✅ Dashboard returns 200
+  ✅ today object exists
+  ✅ recent_events array exists
+  ✅ funnel array exists
+  ✅ daily_trends array exists
+  ❌ today.revenue_today field exists
+  ❌ today.avg_order_value field exists
+  ❌ revenue_today is a number
+  ❌ revenue_today > 0 (at least 1 order happened) — got undefined
+  ❌ avg_order_value > 0 — got undefined
+  ✅ abandon_by_step array exists
+  ✅ Step 3 abandon is tracked
+  ✅ channel_attribution array exists
+  ✅ Instagram channel exists in attribution
+  ✅ Instagram channel has revenue
+  ✅ Instagram channel has order count
+  ✅ top_combos array exists
+  ✅ al-pastor combo appears in top combos
+  ✅ daily_trends has revenue field
+  ✅ Today trend has revenue > 0
+  ✅ Recent order event has order_value in metadata
+  ✅ No auth header → 401
+  ✅ Wrong token → 403
+  ✅ Old dev token correctly rejected → 403
+  ✅ Admin token → 200
+
+✅ Passed: 33
+❌ Failed: 5
+📋 Total:  38
+🏆 Score:  86.8%
+
+⚠️  Algunos tests fallaron — revisar logs arriba.
+

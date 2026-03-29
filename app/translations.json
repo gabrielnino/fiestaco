@@ -80,7 +80,7 @@
       "jalaps": "Pickled Jalapeños",
       "salsa-verde": "Salsa Verde"
     },
-    "waMessage": "🌮 FIESTACO ORDER 🌮\n\nFlavor 1: {f1}\nFlavor 2: {f2}\nAdd-ons: {addons}\nDrinks: {drinks}\n\nTotal: CA${total}\n\nNo interruptions. Just the match. 🔥"
+    "waMessage": "🌮 FIESTACO ORDER 🌮\n📋 Order ID: {order_id}\n\nFlavor 1: {f1}\nFlavor 2: {f2}\nAdd-ons: {addons}\nDrinks: {drinks}\n\nTotal: CA${total}\n\nNo interruptions. Just the match. 🔥"
   },
   "es": {
     "badge": "Kits Auténticos de Tacos Mexicanos",
@@ -163,6 +163,6 @@
       "jalaps": "Jalapeños Encurtidos",
       "salsa-verde": "Salsa Verde"
     },
-    "waMessage": "🌮 PEDIDO FIESTACO 🌮\n\nSabor 1: {f1}\nSabor 2: {f2}\nExtras: {addons}\nBebidas: {drinks}\n\nTotal: CA${total}\n\nSin interrupciones. Solo el partido. 🔥"
+    "waMessage": "🌮 PEDIDO FIESTACO 🌮\n📋 Order ID: {order_id}\n\nSabor 1: {f1}\nSabor 2: {f2}\nExtras: {addons}\nBebidas: {drinks}\n\nTotal: CA${total}\n\nSin interrupciones. Solo el partido. 🔥"
   }
 }

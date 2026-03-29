@@ -7,6 +7,18 @@ import {
 const API_URL = API_CONFIG.BASE_PATH;
 
 // ─────────────────────────────────────────────
+// ORDER ID — visible en WhatsApp y el dashboard
+// Formato: FCO-MMDD-XXXX  ej: FCO-0329-A1B2
+// ─────────────────────────────────────────────
+export function generateOrderId(): string {
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `FCO-${mm}${dd}-${rand}`;
+}
+
+// ─────────────────────────────────────────────
 // SESSION ID
 // ─────────────────────────────────────────────
 export function getSessionId(): string {
@@ -145,14 +157,15 @@ export const analytics = {
     order_value: number;
   }) => trackEvent('kit_complete', data),
 
-  // CONVERSION — includes order_value for revenue tracking (Cambio 1)
+  // CONVERSION — includes order_id + order_value for real revenue tracking
   whatsappClick: (data: {
+    order_id: string;             // FCO-MMDD-XXXX — links to orders table
     flavor1: string;
     flavor2: string;
     addons: string[];
     drinks: string[];
-    order_value: number;          // renamed from totalPrice
-    combo: string;                // "flavor1+flavor2" for combo analysis
+    order_value: number;
+    combo: string;
   }) => trackEvent('whatsapp_click', data),
 
   // ABANDON — fires when session ends mid-wizard without converting (Cambio 2)

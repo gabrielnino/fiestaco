@@ -12,7 +12,7 @@ import Step1Flavor from "../components/Step1Flavor";
 import Step2Flavor from "../components/Step2Flavor";
 import Step3Addons from "../components/Step3Addons";
 import Step4Drinks from "../components/Step4Drinks";
-import { analytics } from "../lib/analytics";
+import { analytics, generateOrderId } from "../lib/analytics";
 import { WizardContext, WizardState } from "../lib/wizard-context";
 
 export default function FiestaCo() {
@@ -143,7 +143,7 @@ export default function FiestaCo() {
     updateWizard({ addonsCount: addons.length, currentPrice: totalPrice });
   }, [flavor1, flavor2, addons, drinks, totalPrice, updateWizard]);
 
-  const buildWhatsAppMessage = () => {
+  const buildWhatsAppMessage = (orderId: string) => {
     const f1 = flavor1?.name || "—";
     const f2 = flavor2?.name || "—";
     const addonNames = addons
@@ -156,6 +156,7 @@ export default function FiestaCo() {
       .join(", ");
 
     return ((t as any).waMessage as string)
+      .replace("{order_id}", orderId)
       .replace("{f1}", f1)
       .replace("{f2}", f2)
       .replace("{addons}", addonNames || (t as any).none)
@@ -164,15 +165,18 @@ export default function FiestaCo() {
   };
 
   const handleOrder = () => {
-    const msg = buildWhatsAppMessage();
+    const orderId = generateOrderId();
+    const msg = buildWhatsAppMessage(orderId);
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     const orderValue = BASE_PRICE + addonTotal + drinkTotal + flavorTotal;
+    const utmSource = (() => { try { const s = localStorage.getItem('fiestaco_utm'); return s ? JSON.parse(s).utm_source : 'direct'; } catch { return 'direct'; } })();
 
     // Mark as converted so AnalyticsProvider won't fire wizard_abandon
     updateWizard({ converted: true, currentStep: 5, currentPrice: orderValue });
 
-    // Track conversion with full revenue data (Cambio 1)
+    // 1. Track the intent event (whatsapp_click)
     analytics.whatsappClick({
+      order_id: orderId,
       flavor1: flavor1?.id || 'unknown',
       flavor2: flavor2?.id || 'unknown',
       addons,
@@ -180,6 +184,19 @@ export default function FiestaCo() {
       order_value: orderValue,
       combo: `${flavor1?.id || 'none'}+${flavor2?.id || 'none'}`,
     });
+
+    // 2. Create a 'pending' order record — seller will mark it won/lost from the dashboard
+    fetch('/api/analytics/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order_id: orderId,
+        intended_price: orderValue,
+        flavor1: flavor1?.id || 'unknown',
+        flavor2: flavor2?.id || 'unknown',
+        utm_source: utmSource,
+      }),
+    }).catch(() => {}); // fire-and-forget, never block the user
 
     window.open(url, "_blank");
   };
