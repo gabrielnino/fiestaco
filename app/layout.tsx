@@ -80,21 +80,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        {/* Preload critical fonts */}
-        <link
-          rel="preload"
-          href={geistSans.style.fontFamily}
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href={geistMono.style.fontFamily}
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
+        {/* Preload critical fonts - Next.js automatically handles font loading */}
+        {/* Font preloading is handled automatically by next/font/google */}
         
         {/* DNS prefetch for external resources */}
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
