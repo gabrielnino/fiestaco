@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+
+    // Testing scripts EXAGERADOS
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
     "test:extreme": "jest --coverage --maxWorkers=2 --testTimeout=60000",
@@ -18,17 +20,27 @@
     "test:all": "jest --coverage --maxWorkers=4 --testTimeout=30000 --verbose",
     "test:ci": "jest --coverage --maxWorkers=2 --testTimeout=60000 --ci --reporters=default --reporters=jest-junit",
     "test:debug": "jest --verbose --no-coverage --detectOpenHandles",
+
+    // Coverage reports
     "coverage": "jest --coverage --coverageReporters=html",
-    "coverage:ci": "jest --coverage --coverageReporters=text-lcov",
-    "coverage:html": "jest --coverage --coverageReporters=html",
+    "coverage:ci": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "coverage:html": "jest --coverage --coverageReporters=html && open coverage/index.html",
     "coverage:xml": "jest --coverage --coverageReporters=cobertura",
+
+    // Performance testing
     "test:performance": "jest --testNamePattern=\"performance|benchmark\" --testTimeout=180000",
     "test:memory": "jest --testNamePattern=\"memory|leak\" --testTimeout=180000",
+
+    // Security testing
     "test:security": "jest --testNamePattern=\"security|injection|xss|sql\" --bail",
+
+    // Specific test suites
     "test:analytics": "jest --testPathPattern=\"analytics\" --verbose",
     "test:components": "jest --testPathPattern=\"components\" --coverage",
     "test:lib": "jest --testPathPattern=\"lib\" --coverage",
     "test:api": "jest --testPathPattern=\"api\" --runInBand",
+
+    // Utility scripts
     "test:clean": "rm -rf coverage .jest-cache",
     "test:update": "jest --updateSnapshot",
     "test:list": "jest --listTests"
@@ -50,6 +62,8 @@
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
     "typescript": "^5",
+
+    // Testing dependencies EXAGERADAS
     "jest": "^29.7.0",
     "@types/jest": "^29.5.12",
     "ts-jest": "^29.1.5",
@@ -58,6 +72,8 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/user-event": "^14.5.2",
     "@jest/globals": "^29.7.0",
+
+    // Testing utilities extremas
     "jest-watch-typeahead": "^2.2.2",
     "jest-html-reporter": "^3.10.2",
     "jest-junit": "^16.0.0",
@@ -68,18 +84,30 @@
     "jest-performance": "^1.0.1",
     "jest-mock-random": "^1.1.1",
     "@testing-library/dom": "^10.0.0",
+
+    // Mocking y stubbing
     "msw": "^2.0.0",
     "@mswjs/data": "^0.12.0",
     "sinon": "^17.0.1",
     "chai": "^4.3.10",
     "chai-as-promised": "^7.1.1",
+
+    // Coverage
     "nyc": "^15.1.0",
     "istanbul-lib-coverage": "^3.2.0",
+
+    // Accessibility testing
     "axe-core": "^4.8.0",
     "@axe-core/react": "^4.8.0",
     "jest-axe": "^7.0.0",
+
+    // Test data generation
     "@faker-js/faker": "^8.4.0",
+
+    // Performance y memory
     "benchmark": "^2.1.4",
+
+    // Snapshot testing
     "@emotion/jest": "^11.11.0"
   }
 }

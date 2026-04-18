@@ -12,16 +12,16 @@ const path = require('path');
 const PORT = process.env.PORT || 3001;
 const BASE_URL = `http://localhost:${PORT}`;
 
-console.log('🧪 Probando sistema de analytics de Fiestaco');
-console.log('=============================================\n');
+console.log('🧪 Testing Fiestaco analytics system');
+console.log('=====================================\n');
 
-// 1. Verificar que la base de datos se crea
-console.log('1. Verificando base de datos...');
+// 1. Verify database creation
+console.log('1. Verifying database...');
 const dbPath = path.join(process.cwd(), 'data', 'analytics.db');
 console.log(`   📁 Ruta: ${dbPath}`);
 
-// 2. Probar endpoint de analytics
-console.log('\n2. Probando endpoint /api/analytics...');
+// 2. Test analytics endpoint
+console.log('\n2. Testing /api/analytics endpoint...');
 
 const testEvent = {
   sessionId: 'test-session-' + Date.now(),
