@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import Image from "next/image";
-import SkullLogo from "../components/SkullLogo";
-import HeroBackground from "../components/HeroBackground";
+import { SkullLogo } from "@/components/ui";
 import SimpleAudioPlayer from "../components/SimpleAudioPlayer";
 import T from "./translations.json";
 

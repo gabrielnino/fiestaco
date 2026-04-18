@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.ANALYTICS_TOKEN || 'fiestaco-dev';
+    const expectedToken = process.env['ANALYTICS_TOKEN'] || 'fiestaco-dev';
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(

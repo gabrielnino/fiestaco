@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
-const ADMIN_TOKEN = process.env.ANALYTICS_TOKEN || 'fiestaco-admin-2024';
+const ADMIN_TOKEN = process.env['ANALYTICS_TOKEN'] || 'fiestaco-admin-2024';
 
 function isAdmin(req: NextRequest) {
   const auth = req.headers.get('authorization');

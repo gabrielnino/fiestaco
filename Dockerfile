@@ -1,59 +1,52 @@
-# Dockerfile para Fiestaco - Sitio optimizado
-# USO: Solo para staging/testing - NO para producción directa
+# Dockerfile optimizado para Fiestaco - Contenedor NUEVO
+# Node.js 20 + Next.js 15 + Build optimizado
 
-# Etapa 1: Builder
-FROM node:20-alpine AS builder
+FROM node:20-alpine AS base
 
-# Instalar dependencias del sistema
+# 1. INSTALAR DEPENDENCIAS
+FROM base AS deps
 RUN apk add --no-cache libc6-compat
-
-# Crear directorio de trabajo
 WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
 
-# Copiar archivos de configuración
-COPY package*.json ./
-COPY package-lock.json* ./
-
-# Instalar dependencias
-RUN npm ci --only=production --ignore-scripts
-
-# Copiar código fuente
+# 2. CONSTRUIR APLICACIÓN
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Construir aplicación
+# Variables de entorno para build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
 RUN npm run build
 
-# Etapa 2: Runner
-FROM node:20-alpine AS runner
+# 3. IMAGEN FINAL
+FROM base AS runner
+WORKDIR /app
 
-# Instalar dependencias del sistema
-RUN apk add --no-cache libc6-compat
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
 
-# Crear usuario no-root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Crear directorio de trabajo
-WORKDIR /app
-
-# Copiar archivos necesarios del builder
+# Copiar solo lo necesario
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Cambiar permisos
+# Permisos
 RUN chown -R nextjs:nodejs /app
 
-# Cambiar a usuario no-root
+# Usuario no-root
 USER nextjs
 
-# Exponer puerto
+# Puerto
 EXPOSE 3001
 
-# Variables de entorno
-ENV PORT=3001
-ENV HOSTNAME="0.0.0.0"
-ENV NODE_ENV="production"
-
-# Comando de inicio
+# Comando optimizado
 CMD ["node", "server.js"]

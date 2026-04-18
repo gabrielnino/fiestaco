@@ -1,5 +1,5 @@
 import { COLORS } from "../lib/constants";
-import FlavorCard from "./FlavorCard";
+import { FlavorCard } from "./ui";
 
 export default function Step1Flavor({
   flavor1,
@@ -65,7 +65,7 @@ export default function Step1Flavor({
             selected={flavor1?.id === f.id}
             onSelect={onSelect}
             disabled={flavor2?.id === f.id}
-            translatedDesc={t.flavorDescs[f.id]}
+            description={t.flavorDescs[f.id]}
           />
         ))}
       </div>

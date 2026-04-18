@@ -33,7 +33,7 @@ fi
 # 2. CONSTRUIR IMAGEN NUEVA
 echo ""
 echo "🔨 2. CONSTRUYENDO IMAGEN NUEVA..."
-docker build -f Dockerfile.optimized -t ${IMAGE_NAME} .
+docker build -f Dockerfile -t ${IMAGE_NAME} .
 
 # 3. CREAR RED NUEVA
 echo ""

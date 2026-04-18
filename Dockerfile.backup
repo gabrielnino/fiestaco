@@ -1,11 +1,11 @@
-# Dockerfile COMPLETO para Fiestaco con todas las dependencias
-# Incluye SQLite a nivel de sistema y paquetes Node.js
+# Dockerfile para Fiestaco - Sitio optimizado
+# USO: Solo para staging/testing - NO para producción directa
 
 # Etapa 1: Builder
 FROM node:20-alpine AS builder
 
-# Instalar dependencias del sistema INCLUYENDO SQLite
-RUN apk add --no-cache libc6-compat sqlite sqlite-dev python3 make g++
+# Instalar dependencias del sistema
+RUN apk add --no-cache libc6-compat
 
 # Crear directorio de trabajo
 WORKDIR /app
@@ -14,8 +14,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY package-lock.json* ./
 
-# Instalar TODAS las dependencias (incluyendo devDependencies para build)
-RUN npm ci
+# Instalar dependencias
+RUN npm ci --only=production --ignore-scripts
 
 # Copiar código fuente
 COPY . .
@@ -26,27 +26,22 @@ RUN npm run build
 # Etapa 2: Runner
 FROM node:20-alpine AS runner
 
-# Instalar dependencias del sistema INCLUYENDO SQLite
-RUN apk add --no-cache libc6-compat sqlite
+# Instalar dependencias del sistema
+RUN apk add --no-cache libc6-compat
 
-# Crear usuario no-root para seguridad
+# Crear usuario no-root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos estáticos
+# Copiar archivos necesarios del builder
 COPY --from=builder /app/public ./public
-
-# Copiar aplicación construida
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Copiar node_modules con sqlite/sqlite3
-COPY --from=builder /app/node_modules ./node_modules
-
-# Configurar permisos
+# Cambiar permisos
 RUN chown -R nextjs:nodejs /app
 
 # Cambiar a usuario no-root
@@ -59,8 +54,6 @@ EXPOSE 3001
 ENV PORT=3001
 ENV HOSTNAME="0.0.0.0"
 ENV NODE_ENV="production"
-ENV ANALYTICS_TOKEN="fiestaco-dev"
-ENV DASHBOARD_TOKEN="fiestaco-admin-2024"
 
 # Comando de inicio
 CMD ["node", "server.js"]

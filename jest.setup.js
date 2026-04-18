@@ -20,7 +20,15 @@ failOnConsole({
   shouldFailOnDebug: true,
   shouldFailOnInfo: true,
   shouldFailOnLog: true,
-  silenceMessage: (errorMessage) => {
+  silenceMessage: (errorMessage, method) => {
+    // Ignorar advertencia de transformación JSX obsoleta de React
+    if (method === 'warn' && errorMessage.includes('outdated JSX transform')) {
+      return true;
+    }
+    // Ignorar sugerencias de Testing Library sobre mejores queries
+    if (method === 'warn' && errorMessage.includes('A better query is available')) {
+      return true;
+    }
     // Solo permitir ciertos mensajes en development
     if (process.env.NODE_ENV === 'test') return false;
     return true;
@@ -71,58 +79,64 @@ configure({
 // Mock global objects exhaustivamente
 global.jest = jest;
 
-// Mock de localStorage exhaustivo
-const localStorageMock = (() => {
-  let store = {};
-  return {
-    getItem: jest.fn((key) => store[key] || null),
-    setItem: jest.fn((key, value) => {
-      store[key] = String(value);
-    }),
-    removeItem: jest.fn((key) => {
-      delete store[key];
-    }),
-    clear: jest.fn(() => {
-      store = {};
-    }),
-    key: jest.fn((index) => Object.keys(store)[index] || null),
-    get length() {
-      return Object.keys(store).length;
-    },
-    _store: store,
-  };
-})();
+// Mock de localStorage exhaustivo con persistencia
+let localStorageStore = {};
+const localStorageMock = {
+  getItem: jest.fn((key) => localStorageStore[key] || null),
+  setItem: jest.fn((key, value) => {
+    localStorageStore[key] = String(value);
+  }),
+  removeItem: jest.fn((key) => {
+    delete localStorageStore[key];
+  }),
+  clear: jest.fn(() => {
+    localStorageStore = {};
+  }),
+  key: jest.fn((index) => Object.keys(localStorageStore)[index] || null),
+  get length() {
+    return Object.keys(localStorageStore).length;
+  },
+  _store: localStorageStore,
+};
 
+// Asegurar que el mock persista después de clearAllMocks
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
   writable: true,
+  configurable: true,
 });
 
 // Mock de sessionStorage
-const sessionStorageMock = (() => {
-  let store = {};
-  return {
-    getItem: jest.fn((key) => store[key] || null),
-    setItem: jest.fn((key, value) => {
-      store[key] = String(value);
-    }),
-    removeItem: jest.fn((key) => {
-      delete store[key];
-    }),
-    clear: jest.fn(() => {
-      store = {};
-    }),
-  };
-})();
+let sessionStorageStore = {};
+const sessionStorageMock = {
+  getItem: jest.fn((key) => sessionStorageStore[key] || null),
+  setItem: jest.fn((key, value) => {
+    sessionStorageStore[key] = String(value);
+  }),
+  removeItem: jest.fn((key) => {
+    delete sessionStorageStore[key];
+  }),
+  clear: jest.fn(() => {
+    sessionStorageStore = {};
+  }),
+};
 
 Object.defineProperty(window, 'sessionStorage', {
   value: sessionStorageMock,
+  writable: true,
+  configurable: true,
 });
 
 // Mock de navigator.sendBeacon
+// Asegurar que window.navigator existe
+if (!window.navigator) {
+  window.navigator = {};
+}
+const sendBeaconMock = jest.fn(() => true);
 Object.defineProperty(window.navigator, 'sendBeacon', {
-  value: jest.fn(() => true),
+  value: sendBeaconMock,
   writable: true,
+  configurable: true,
 });
 
 // Mock de fetch exhaustivo
@@ -133,10 +147,26 @@ global.AbortController = jest.fn(() => ({
 }));
 
 // Mock de crypto.randomUUID
+let uuidCounter = 0;
 Object.defineProperty(global.crypto, 'randomUUID', {
-  value: jest.fn(() => 'mock-uuid-1234-5678-9012-3456'),
+  value: jest.fn(() => {
+    uuidCounter++;
+    return `session_${uuidCounter.toString().padStart(8, '0')}-mock-uuid`;
+  }),
   writable: true,
 });
+
+// Mock de Math.random para tests determinísticos
+// Se puede sobreescribir en tests específicos si es necesario
+if (!Math.random.isMocked) {
+  let randomCallCount = 0;
+  jest.spyOn(Math, 'random').mockImplementation(() => {
+    randomCallCount++;
+    // Usar un valor que produzca una string base36 con al menos 6 caracteres después del punto
+    return 0.1000001 + (randomCallCount * 0.000000001);
+  });
+  Math.random.isMocked = true;
+}
 
 // Mock de URLSearchParams
 global.URLSearchParams = jest.fn((init) => {
@@ -269,25 +299,30 @@ global.console = {
 
 // Cleanup después de cada test
 afterEach(() => {
-  jest.clearAllMocks();
-  localStorageMock.clear();
-  sessionStorageMock.clear();
+  // Limpiar mocks pero no restaurar implementaciones originales
+  // jest.clearAllMocks() restauraría implementaciones originales
+  jest.clearAllTimers();
+
+  // Limpiar stores
+  localStorageStore = {};
+  sessionStorageStore = {};
+
   window.location.search = '';
   window.location.hash = '';
   window.location.pathname = '/test';
   global.Date.reset();
 
-  // Reset fetch
-  global.fetch.mockClear?.();
-  if (global.fetch.mockReset) global.fetch.mockReset();
+  // Reset fetch sin restaurar implementación
+  if (global.fetch.mockClear) global.fetch.mockClear();
 
   // Reset navigator.sendBeacon
-  if (window.navigator.sendBeacon.mockClear) {
+  if (window.navigator?.sendBeacon?.mockClear) {
     window.navigator.sendBeacon.mockClear();
   }
 
-  // Reset URLSearchParams
-  jest.clearAllMocks();
+  // Resetear contadores de mocks
+  if (Math.random.mockClear) Math.random.mockClear();
+  if (crypto.randomUUID?.mockClear) crypto.randomUUID.mockClear();
 });
 
 // Setup global beforeAll

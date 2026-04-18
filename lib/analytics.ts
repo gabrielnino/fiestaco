@@ -12,8 +12,8 @@ const API_URL = API_CONFIG.BASE_PATH;
 // ─────────────────────────────────────────────
 export function generateOrderId(): string {
   const now = new Date();
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(now.getUTCDate()).padStart(2, '0');
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `FCO-${mm}${dd}-${rand}`;
 }

@@ -4,7 +4,7 @@ import { getDb } from '@/lib/db';
 export async function GET(request: NextRequest) {
   try {
     const authHeader = request.headers.get('authorization');
-    const expectedToken = process.env.ANALYTICS_TOKEN || 'fiestaco-admin-2024';
+    const expectedToken = process.env['ANALYTICS_TOKEN'] || 'fiestaco-admin-2024';
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

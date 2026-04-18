@@ -3,7 +3,7 @@ import { getPrices, savePrices, PricesConfig } from '../../../../lib/config-stor
 
 const ADMIN_TOKEN = 'Bearer fiestaco-admin-2024';
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const prices = getPrices();
     return NextResponse.json(prices);

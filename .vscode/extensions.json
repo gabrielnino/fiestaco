@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "usernamehw.errorlens",
+    "yoavbls.pretty-ts-errors",
+    "visualstudioexptteam.vscodeintellicode",
+    "christian-kohler.npm-intellisense",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-js-profile-flame",
+    "wix.vscode-import-cost",
+    "streetsidesoftware.code-spell-checker",
+    "aaron-bond.better-comments",
+    "gruntfuggly.todo-tree",
+    "mikestead.dotenv",
+    "oderwat.indent-rainbow"
+  ]
+}

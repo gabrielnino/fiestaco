@@ -1,5 +1,5 @@
 import { COLORS, DRINKS } from "../lib/constants";
-import AddonToggle from "./AddonToggle";
+import { AddonToggle } from "./ui";
 
 export default function Step4Drinks({
   containerRef,
@@ -54,7 +54,7 @@ export default function Step4Drinks({
         {DRINKS.map((drink) => (
           <AddonToggle
             key={drink.id}
-            addon={drink}
+            item={drink}
             selected={drinks.includes(drink.id)}
             onToggle={onToggle}
             label={drink.name}

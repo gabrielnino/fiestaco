@@ -1,0 +1,83 @@
+{
+  "project": "FiestaCo",
+  "automation": {
+    "statusUpdate": {
+      "enabled": true,
+      "schedule": "0 9 * * *", // Todos los días a las 9 AM
+      "commands": [
+        "node scripts/update-project-status.js",
+        "git add PROJECT-MANAGEMENT.md project-status.json",
+        "git commit -m 'chore: actualizar estado del proyecto [automated]'",
+        "git push origin main"
+      ]
+    },
+    "testRunner": {
+      "enabled": true,
+      "schedule": "*/30 * * * *", // Cada 30 minutos
+      "commands": [
+        "npm test -- --passWithNoTests",
+        "node scripts/report-test-results.js"
+      ]
+    },
+    "notifications": {
+      "slackWebhook": "${SLACK_WEBHOOK_URL}",
+      "teamsWebhook": "${TEAMS_WEBHOOK_URL}",
+      "emailRecipients": ["dev-team@fiestaco.dev"]
+    }
+  },
+  "team": {
+    "members": [
+      {
+        "name": "Dev Frontend",
+        "role": "frontend",
+        "responsibilities": ["components", "hooks", "styling"],
+        "slack": "@dev-frontend"
+      },
+      {
+        "name": "Dev Backend",
+        "role": "backend",
+        "responsibilities": ["api", "analytics", "database"],
+        "slack": "@dev-backend"
+      },
+      {
+        "name": "QA Engineer",
+        "role": "qa",
+        "responsibilities": ["testing", "quality", "ci-cd"],
+        "slack": "@qa-engineer"
+      },
+      {
+        "name": "DevOps",
+        "role": "devops",
+        "responsibilities": ["infrastructure", "deployment", "monitoring"],
+        "slack": "@devops"
+      },
+      {
+        "name": "Product Manager",
+        "role": "product",
+        "responsibilities": ["requirements", "prioritization", "stakeholders"],
+        "slack": "@product-manager"
+      }
+    ],
+    "sprints": {
+      "durationDays": 14,
+      "currentSprint": 3,
+      "startDate": "2026-04-15",
+      "endDate": "2026-04-29"
+    }
+  },
+  "repositories": {
+    "main": "https://github.com/org/fiestaco",
+    "docs": "https://docs.fiestaco.dev",
+    "ci": "https://github.com/org/fiestaco/actions"
+  },
+  "environments": {
+    "local": "http://localhost:3000",
+    "staging": "https://staging.fiestaco.dev",
+    "production": "https://fiestaco.dev"
+  },
+  "monitoring": {
+    "uptime": "https://status.fiestaco.dev",
+    "metrics": "https://grafana.fiestaco.dev",
+    "logs": "https://logs.fiestaco.dev"
+  }
+}

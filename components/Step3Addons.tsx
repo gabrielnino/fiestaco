@@ -1,5 +1,5 @@
 import { COLORS, ADDONS } from "../lib/constants";
-import AddonToggle from "./AddonToggle";
+import { AddonToggle } from "./ui";
 
 export default function Step3Addons({
   containerRef,
@@ -54,7 +54,7 @@ export default function Step3Addons({
         {ADDONS.map((addon) => (
           <AddonToggle
             key={addon.id}
-            addon={addon}
+            item={addon}
             selected={addons.includes(addon.id)}
             onToggle={onToggle}
             label={t.addonNames[addon.id] || addon.name}
