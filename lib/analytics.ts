@@ -7,8 +7,8 @@ import {
 const API_URL = API_CONFIG.BASE_PATH;
 
 // ─────────────────────────────────────────────
-// ORDER ID — visible en WhatsApp y el dashboard
-// Formato: FCO-MMDD-XXXX  ej: FCO-0329-A1B2
+// ORDER ID — visible in WhatsApp and dashboard
+// Format: FCO-MMDD-XXXX  e.g., FCO-0329-A1B2
 // ─────────────────────────────────────────────
 export function generateOrderId(): string {
   const now = new Date();
@@ -44,7 +44,7 @@ export function getSessionId(): string {
 }
 
 // ─────────────────────────────────────────────
-// UTM ATTRIBUTION (Cambio 3)
+// UTM ATTRIBUTION
 // ─────────────────────────────────────────────
 const UTM_STORAGE_KEY = 'fiestaco_utm';
 
@@ -168,7 +168,7 @@ export const analytics = {
     combo: string;
   }) => trackEvent('whatsapp_click', data),
 
-  // ABANDON — fires when session ends mid-wizard without converting (Cambio 2)
+  // ABANDON — fires when session ends mid-wizard without converting
   wizardAbandon: (data: {
     at_step: number;
     flavor1: string | null;

@@ -1,10 +1,10 @@
-// Script de mejora SEO para Fiestaco
-// Prioridad 1: Optimización de imágenes y alt text
+// SEO improvement script for Fiestaco
+// Priority 1: Image optimization and alt text
 
 const fs = require('fs');
 const path = require('path');
 
-// Mapeo de imágenes a descripciones alt
+// Image to alt text mapping
 const ALT_TEXT_MAP = {
   'al_pastor.png': 'Al Pastor Tacos - Traditional Mexican marinated pork with pineapple and spices',
   'barbacoa_cordero.png': 'Barbacoa Lamb Tacos - Slow-cooked lamb with traditional Mexican barbacoa seasoning',
@@ -28,7 +28,7 @@ const ALT_TEXT_MAP = {
   'logo.png': 'Fiestaco Logo - Skull design with Mexican aesthetic'
 };
 
-// 1. Optimizar imágenes existentes (convertir a WebP)
+// 1. Optimize existing images (convert to WebP)
 function optimizeImages() {
   console.log('🔧 Paso 1: Optimizar imágenes a WebP');
   console.log('Nota: Requiere instalación de sharp y script de conversión');
@@ -36,7 +36,7 @@ function optimizeImages() {
   console.log('');
 }
 
-// 2. Actualizar page.tsx con next/image y alt text
+// 2. Update page.tsx with next/image and alt text
 function updatePageComponent() {
   const pagePath = path.join(__dirname, 'app/page.tsx');
   let content = fs.readFileSync(pagePath, 'utf8');
@@ -51,7 +51,7 @@ function updatePageComponent() {
     console.log('   <Image src="..." alt="..." width={400} height={300} />');
   }
   
-  // Contar imágenes potenciales
+  // Count potential images
   const imageCount = (content.match(/\.png/g) || []).length;
   console.log(`📊 Imágenes PNG referenciadas: ${imageCount}`);
   
@@ -72,7 +72,7 @@ function improveSchemaMarkup() {
   console.log('🎯 Paso 3: Mejorar Schema.org markup');
   
   const schemaSuggestions = `
-  // Añadir al layout.tsx o crear componente separado:
+  // Add to layout.tsx or create separate component:
   
   // Product schema para cada kit
   const productSchema = {
@@ -165,7 +165,7 @@ function improvePerformance() {
   console.log('');
 }
 
-// 5. Checklist de implementación
+// 5. Implementation checklist
 function implementationChecklist() {
   console.log('📋 CHECKLIST DE IMPLEMENTACIÓN PRIORITARIA');
   console.log('=' .repeat(50));

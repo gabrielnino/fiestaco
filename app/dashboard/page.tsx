@@ -196,7 +196,7 @@ export default function AnalyticsDashboard() {
     router.push('/');
   };
 
-  // ── CSV Export (para Google Sheets manual) ──────────────────
+  // ── CSV Export (for manual Google Sheets) ──────────────────
   const handleExportCSV = async () => {
     try {
       const res = await fetch('/api/analytics/orders?limit=500', {

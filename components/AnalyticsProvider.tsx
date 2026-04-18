@@ -29,7 +29,7 @@ export default function AnalyticsProvider() {
     };
     window.addEventListener('popstate', handleRouteChange);
 
-    // ─── Wizard Abandon Detection (Cambio 2) ──────────────────────
+    // ─── Wizard Abandon Detection ──────────────────────
     const fireAbandonIfNeeded = () => {
       const wizard = wizardRef.current;
       // Only fire if wizard was started but user never converted

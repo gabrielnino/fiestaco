@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Script de prueba completo para el sistema de analytics + dashboard
+ * Complete test script for the analytics + dashboard system
  */
 
 const http = require('http');
@@ -12,10 +12,10 @@ const fs = require('fs');
 const PORT = process.env.PORT || 3001;
 const BASE_URL = `http://localhost:${PORT}`;
 
-console.log('🧪 PRUEBA COMPLETA DEL SISTEMA DE ANALYTICS');
-console.log('=============================================\n');
+console.log('🧪 COMPLETE ANALYTICS SYSTEM TEST');
+console.log('===================================\n');
 
-// Colores para consola
+// Console colors
 const colors = {
   reset: '\x1b[0m',
   green: '\x1b[32m',
@@ -94,7 +94,7 @@ async function testEndpoint(method, path, data = null, headers = {}) {
 async function runTests() {
   let allTestsPassed = true;
   
-  // Test 1: Verificar que el servidor está corriendo
+  // Test 1: Verify the server is running
   logStep('1', 'Verificando servidor Next.js');
   try {
     const healthCheck = await testEndpoint('GET', '/health');
@@ -121,7 +121,7 @@ async function runTests() {
     logInfo('Base de datos no existe aún (se creará con el primer evento)');
   }
   
-  // Test 3: Probar endpoint de analytics (POST)
+  // Test 3: Test analytics endpoint (POST)
   logStep('3', 'Probando endpoint POST /api/analytics');
   const testEvent = {
     sessionId: `test-session-${Date.now()}`,
@@ -146,7 +146,7 @@ async function runTests() {
     allTestsPassed = false;
   }
   
-  // Test 4: Probar endpoint GET protegido (sin token)
+  // Test 4: Test protected GET endpoint (without token)
   logStep('4', 'Probando endpoint GET /api/analytics (sin token)');
   const getNoAuth = await testEndpoint('GET', '/api/analytics');
   if (getNoAuth.status === 401 || getNoAuth.status === 403) {
@@ -155,7 +155,7 @@ async function runTests() {
     logWarning(`Status inesperado sin token: ${getNoAuth.status}`);
   }
   
-  // Test 5: Probar endpoint GET con token
+  // Test 5: Test GET endpoint with token
   logStep('5', 'Probando endpoint GET /api/analytics (con token)');
   const getWithAuth = await testEndpoint('GET', '/api/analytics', null, {
     'Authorization': 'Bearer fiestaco-dev'
@@ -175,7 +175,7 @@ async function runTests() {
     console.log(`   Respuesta: ${getWithAuth.data}`);
   }
   
-  // Test 6: Probar dashboard endpoint
+  // Test 6: Test dashboard endpoint
   logStep('6', 'Probando dashboard /api/analytics/dashboard');
   const dashboardResult = await testEndpoint('GET', '/api/analytics/dashboard', null, {
     'Authorization': 'Bearer fiestaco-admin-2024'
@@ -202,7 +202,7 @@ async function runTests() {
     logSuccess('Página dashboard cargando correctamente');
     console.log(`   Tamaño HTML: ${dashboardPage.data.length} bytes`);
     
-    // Verificar que es una página React
+    // Verify it's a React page
     if (dashboardPage.data.includes('React') || dashboardPage.data.includes('root')) {
       logInfo('Página React detectada');
     }
@@ -210,7 +210,7 @@ async function runTests() {
     logWarning(`Dashboard page status: ${dashboardPage.status}`);
   }
   
-  // Test 8: Simular flujo completo de usuario
+  // Test 8: Simulate complete user flow
   logStep('8', 'Simulando flujo completo de usuario');
   const userSession = `user-${Date.now()}`;
   const userEvents = [
@@ -260,16 +260,16 @@ async function runTests() {
     logWarning(`Solo ${eventsSent}/${userEvents.length} eventos enviados`);
   }
   
-  // Test 9: Verificar datos en base de datos
+  // Test 9: Verify data in database
   logStep('9', 'Verificando integridad de datos');
   if (fs.existsSync(dbPath)) {
-    // Usar sqlite3 para consultar
+    // Use sqlite3 to query
     exec(`sqlite3 ${dbPath} "SELECT COUNT(*) as total FROM events;"`, (error, stdout) => {
       if (!error && stdout) {
         const totalEvents = parseInt(stdout.trim());
         logSuccess(`Total de eventos en base de datos: ${totalEvents}`);
         
-        // Contar eventos por tipo
+        // Count events by type
         exec(`sqlite3 ${dbPath} "SELECT event_name, COUNT(*) as count FROM events GROUP BY event_name ORDER BY count DESC;"`, (error, stdout) => {
           if (!error && stdout) {
             console.log('\n   Distribución de eventos:');
@@ -283,7 +283,7 @@ async function runTests() {
     });
   }
   
-  // Resumen final
+  // Final summary
   console.log(`\n${colors.cyan}📊 RESUMEN DE PRUEBAS${colors.reset}`);
   console.log('=====================');
   

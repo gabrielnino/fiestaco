@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   generateEtags: true,
   
-  // Headers de seguridad y performance
+  // Security and performance headers
   async headers() {
     return [
       {
