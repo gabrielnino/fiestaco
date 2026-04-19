@@ -1,0 +1,75 @@
+# Dockerfile con DNS configurado y solución para imágenes
+FROM node:20-alpine AS builder
+
+# 1. CONFIGURAR DNS AL INICIO
+RUN echo "🔧 Configurando DNS..." && \
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+
+# 2. HERRAMIENTAS
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# 3. COPIAR Y MODIFICAR CONSTANTS.TS CON URL ALTERNATIVA
+COPY . .
+
+# Modificar constants.ts para usar URL más accesible para guacamole
+RUN echo "🔄 Configurando URL alternativa para guacamole..." && \
+    # URL alternativa de guacamole (Wikimedia)
+    sed -i "s|https://californiaavocado.com/wp-content/uploads/2020/07/Guacamole-Autentico-1.jpeg|https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Guacamole_avocado_dip.jpg/500px-Guacamole_avocado_dip.jpg|g" lib/constants.ts && \
+    echo "✅ URL de guacamole actualizada a Wikimedia"
+
+# 4. COPIAR PACKAGE.JSON
+COPY package.json package-lock.json* ./
+
+# 5. REMOVER SQLITE3 (mismo método que antes)
+RUN cp package.json package.json.original && \
+    apk add --no-cache jq && \
+    jq 'del(.dependencies.sqlite3)' package.json > package.json.tmp && \
+    mv package.json.tmp package.json && \
+    echo "✅ sqlite3 removido"
+
+# 6. INSTALAR
+RUN npm ci --legacy-peer-deps
+
+# 7. RESTAURAR PACKAGE.JSON
+RUN mv package.json.original package.json
+
+# 8. CONFIGURAR ENTORNO
+ENV NODE_ENV=production
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 9. BUILD
+RUN npm run build
+
+# ========= RUNTIME =========
+FROM node:20-alpine AS runner
+
+# CONFIGURAR DNS TAMBIÉN EN RUNTIME
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+CMD ["node", "server.js"]

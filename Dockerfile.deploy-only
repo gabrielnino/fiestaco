@@ -1,0 +1,33 @@
+# Dockerfile para solo despliegue - asume que la app ya está construida
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Solo copiar lo necesario para producción
+COPY package.json package-lock.json* ./
+COPY public ./public
+COPY .next ./.next
+
+# Instalar solo dependencias de producción
+RUN npm ci --only=production --legacy-peer-deps
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Puerto
+EXPOSE 3001
+
+# Usuario no-root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Cambiar propietario
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+# Comando para iniciar
+CMD ["npx", "next", "start"]

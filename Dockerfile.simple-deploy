@@ -1,0 +1,39 @@
+# Dockerfile simplificado para despliegue rápido de FiestaCo
+FROM node:20-alpine
+
+# Instalar dependencias del sistema
+RUN apk add --no-cache libc6-compat python3 make g++
+
+WORKDIR /app
+
+# Copiar package files
+COPY package.json package-lock.json* ./
+
+# Instalar dependencias con legacy-peer-deps para evitar conflictos
+RUN npm install --legacy-peer-deps
+
+# Copiar código fuente
+COPY . .
+
+# Variables de entorno para build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Construir aplicación
+RUN npm run build
+
+# Puerto
+EXPOSE 3001
+
+# Usuario no-root (opcional para seguridad)
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Cambiar propietario de los archivos
+RUN chown -R nextjs:nodejs /app
+
+# Cambiar a usuario no-root
+USER nextjs
+
+# Comando para iniciar la aplicación
+CMD ["npm", "start"]

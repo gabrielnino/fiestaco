@@ -102,7 +102,7 @@ export function mergeStyles(base: any, ...overrides: any[]) {
 }
 
 // Hook para estilos memoizados
-export function useMemoizedStyles(deps: any[]) {
+export function useMemoizedStyles(_deps: any[]) {
   // Este hook sería usado en componentes client
   // Para usar: import { useMemo } from 'react';
   // const styles = useMemoizedStyles([deps]);

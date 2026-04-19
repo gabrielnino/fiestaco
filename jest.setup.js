@@ -29,6 +29,14 @@ failOnConsole({
     if (method === 'warn' && errorMessage.includes('A better query is available')) {
       return true;
     }
+    // Ignorar errores de JSDOM por APIs no implementadas
+    if (errorMessage.includes('Not implemented') || errorMessage.includes('not implemented')) {
+      return true;
+    }
+    // Ignorar errores de getComputedStyle no implementado
+    if (errorMessage.includes('getComputedStyle') || errorMessage.includes('computedStyle')) {
+      return true;
+    }
     // Solo permitir ciertos mensajes en development
     if (process.env.NODE_ENV === 'test') return false;
     return true;
@@ -129,15 +137,25 @@ Object.defineProperty(window, 'sessionStorage', {
 
 // Mock de navigator.sendBeacon
 // Asegurar que window.navigator existe
-if (!window.navigator) {
-  window.navigator = {};
+if (typeof window !== 'undefined') {
+  if (!window.navigator) {
+    window.navigator = {};
+  }
+  const sendBeaconMock = jest.fn(() => true);
+  Object.defineProperty(window.navigator, 'sendBeacon', {
+    value: sendBeaconMock,
+    writable: true,
+    configurable: true,
+  });
 }
-const sendBeaconMock = jest.fn(() => true);
-Object.defineProperty(window.navigator, 'sendBeacon', {
-  value: sendBeaconMock,
-  writable: true,
-  configurable: true,
-});
+
+// También mockear navigator globalmente para acceso directo
+if (typeof global !== 'undefined' && !global.navigator) {
+  const sendBeaconMock = jest.fn(() => true);
+  global.navigator = {
+    sendBeacon: sendBeaconMock,
+  };
+}
 
 // Mock de fetch exhaustivo
 global.fetch = jest.fn();

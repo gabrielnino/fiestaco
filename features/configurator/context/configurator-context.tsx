@@ -11,7 +11,7 @@ import {
 import {
   ConfiguratorState,
   ConfiguratorContextType,
-  ConfiguratorAction,
+  // ConfiguratorAction,
   initialState,
 } from "../types/state.types";
 import { configuratorReducer, calculateTotalPrice } from "../state/configurator-reducer";

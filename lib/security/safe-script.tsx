@@ -74,7 +74,7 @@ export function SafeAnalyticsScript({
       <>
         <Script
           defer
-          data-domain={config.domain || "fiestaco.today"}
+          data-domain={config['domain'] || "fiestaco.today"}
           src="https://plausible.io/js/script.js"
           strategy="afterInteractive"
         />
@@ -142,9 +142,9 @@ export function validateFormData<T>(
     const validator = schema[key];
     const value = data[key];
 
-    if (!validator(value)) {
+    if (validator && !validator(value)) {
       errors.push(`Invalid value for ${key}`);
-    } else {
+    } else if (validator) {
       // Sanitizar strings
       sanitizedData[key] = typeof value === "string" ? sanitizeString(value) : value;
     }

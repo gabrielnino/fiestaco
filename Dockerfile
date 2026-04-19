@@ -5,13 +5,15 @@ FROM node:20-alpine AS base
 
 # 1. INSTALAR DEPENDENCIAS
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 make g++ linux-headers py3-pip
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm ci --legacy-peer-deps
 
 # 2. CONSTRUIR APLICACIÓN
 FROM base AS builder
+RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

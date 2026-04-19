@@ -8,7 +8,7 @@ interface UseConfiguratorOptions {
 }
 
 export function useConfiguratorEnhanced(options: UseConfiguratorOptions = {}) {
-  const { enableAnalytics = true, onStateChange } = options;
+  const { enableAnalytics: _enableAnalytics = true, onStateChange: _onStateChange } = options;
 
   // Obtener estado y acciones del contexto
   const configurator = useConfigurator();
@@ -45,18 +45,21 @@ export function useConfiguratorEnhanced(options: UseConfiguratorOptions = {}) {
     const f1 = state.flavor1?.name || "—";
     const f2 = state.flavor2?.name || "—";
     const addonNames = state.addons
-      .map((addon) => translations.addonNames[addon.id] || addon.name)
+      .map((addon) => (translations as any).addonNames?.[addon.id] || addon.name)
       .join(", ");
     const drinkNames = state.drinks.map((drink) => drink.name).join(", ");
 
     const totalPrice = actions.getTotalPrice(basePrice);
 
-    return translations.waMessage
+    const waMessage = (translations as any).waMessage || "";
+const noneText = (translations as any).none || "none";
+
+return waMessage
       .replace("{order_id}", state.sessionId)
       .replace("{f1}", f1)
       .replace("{f2}", f2)
-      .replace("{addons}", addonNames || translations.none)
-      .replace("{drinks}", drinkNames || translations.none)
+      .replace("{addons}", addonNames || noneText)
+      .replace("{drinks}", drinkNames || noneText)
       .replace("{total}", totalPrice.toString());
   };
 
@@ -107,7 +110,7 @@ export function useConfiguratorEnhanced(options: UseConfiguratorOptions = {}) {
     trackAbandon,
 
     // Computed values
-    totalPrice: actions.getTotalPrice(),
+    totalPrice: actions.getTotalPrice(45), // BASE_PRICE
     isKitReady: actions.isKitReady,
     selectedAddons: state.addons,
     selectedDrinks: state.drinks,

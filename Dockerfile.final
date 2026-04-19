@@ -1,0 +1,40 @@
+# Dockerfile final para FiestaCo con Node.js Bookworm (GLIBC más reciente)
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema necesarias para sqlite3
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar archivos de configuración
+COPY package.json package-lock.json* ./
+COPY .env.docker .env
+
+# Instalar dependencias con legacy-peer-deps
+RUN npm install --legacy-peer-deps
+
+# Copiar código fuente
+COPY . .
+
+# Construir aplicación
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+ENV DISABLE_SQLITE_ANALYTICS=true
+
+RUN npm run build
+
+# Puerto
+EXPOSE 3001
+
+# Usuario no-root para seguridad
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+# Comando para iniciar
+CMD ["npm", "start"]

@@ -5,7 +5,7 @@
 
 // Simulación de Zod para ahora - implementaremos Zod real después
 export interface ValidationSchema {
-  validate: (data: any) => { success: boolean; errors?: string[] };
+  validate: (data: any) => { success: boolean; errors: string[] };
   sanitize: (data: any) => any;
 }
 
@@ -40,7 +40,7 @@ export const orderSchema: ValidationSchema = {
 
     return {
       success: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined,
+      errors,
     };
   },
 
@@ -63,14 +63,14 @@ export const orderSchema: ValidationSchema = {
     // Sanitizar arrays
     if (Array.isArray(sanitized.addons)) {
       sanitized.addons = sanitized.addons
-        .filter((item) => typeof item === "string")
-        .map((item) => item.replace(/[^a-zA-Z0-9-]/g, ""));
+        .filter((item: any) => typeof item === "string")
+        .map((item: string) => item.replace(/[^a-zA-Z0-9-]/g, ""));
     }
 
     if (Array.isArray(sanitized.drinks)) {
       sanitized.drinks = sanitized.drinks
-        .filter((item) => typeof item === "string")
-        .map((item) => item.replace(/[^a-zA-Z0-9-]/g, ""));
+        .filter((item: any) => typeof item === "string")
+        .map((item: string) => item.replace(/[^a-zA-Z0-9-]/g, ""));
     }
 
     return sanitized;
@@ -100,7 +100,7 @@ export const priceUpdateSchema: ValidationSchema = {
 
     return {
       success: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined,
+      errors,
     };
   },
 
@@ -149,7 +149,7 @@ export const utmSchema: ValidationSchema = {
 
     return {
       success: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined,
+      errors,
     };
   },
 
@@ -186,7 +186,7 @@ export const whatsappMessageSchema: ValidationSchema = {
 
     return {
       success: errors.length === 0,
-      errors: errors.length > 0 ? errors : undefined,
+      errors,
     };
   },
 
@@ -211,7 +211,7 @@ export const whatsappMessageSchema: ValidationSchema = {
 export function validateAndSanitize<T>(
   data: any,
   schema: ValidationSchema
-): { success: boolean; data?: T; errors?: string[] } {
+): { success: boolean; data?: T; errors: string[] } {
   const validation = schema.validate(data);
 
   if (!validation.success) {
@@ -219,7 +219,7 @@ export function validateAndSanitize<T>(
   }
 
   const sanitizedData = schema.sanitize(data);
-  return { success: true, data: sanitizedData as T };
+  return { success: true, data: sanitizedData as T, errors: [] };
 }
 
 // Middleware para validación de API

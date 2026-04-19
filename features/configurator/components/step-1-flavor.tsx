@@ -1,4 +1,3 @@
-import { Flavor } from "@/types/fiesta.types";
 import { FlavorCard } from "@/components/ui";
 import { COLORS } from "@/lib/constants";
 import { Step1FlavorProps } from "../types/steps.types";

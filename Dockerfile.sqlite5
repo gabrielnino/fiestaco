@@ -1,0 +1,60 @@
+# Dockerfile usando sqlite3 versión 5.x (más estable)
+
+FROM node:20-alpine AS base
+
+# Herramientas mínimas
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    linux-headers
+
+WORKDIR /app
+
+# Copiar package.json
+COPY package.json package-lock.json* ./
+
+# Estrategia: Instalar sqlite3@5.1.6 primero (más compatible)
+# Luego sobreescribir package.json temporalmente para esa versión
+RUN echo '{"dependencies":{"sqlite3":"5.1.6"}}' > /tmp/sqlite-package.json && \
+    npm install --prefix /tmp sqlite3@5.1.6 --build-from-source --legacy-peer-deps && \
+    cp -r /tmp/node_modules/sqlite3 node_modules/ 2>/dev/null || true
+
+# Ahora instalar el resto (sqlite3 ya está instalado)
+RUN npm ci --legacy-peer-deps --ignore-scripts
+
+# Verificar que sqlite3 esté instalado
+RUN ls -la node_modules/ | grep sqlite && \
+    node -e "try { require('sqlite3'); console.log('sqlite3 cargado OK') } catch(e) { console.error('Error:', e.message) }"
+
+# Copiar aplicación
+COPY . .
+
+# Construir
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Imagen final
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=base /app/public ./public
+COPY --from=base /app/.next/standalone ./
+COPY --from=base /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+CMD ["node", "server.js"]

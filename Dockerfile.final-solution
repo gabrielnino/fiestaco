@@ -1,0 +1,124 @@
+# SOLUCIÓN DEFINITIVA - Dockerfile para Fiestaco
+# Resuelve problemas de sqlite3 sin acceso a internet externo
+
+FROM node:20-alpine AS builder
+
+# === PASO 1: CONFIGURACIÓN COMPLETA DEL SISTEMA ===
+RUN echo "🔧 Configurando sistema..." && \
+    # DNS confiables
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf && \
+    # Todas las herramientas de compilación necesarias
+    apk add --no-cache --virtual .build-deps \
+    python3 \
+    python3-dev \
+    make \
+    g++ \
+    gcc \
+    libc-dev \
+    linux-headers \
+    build-base \
+    sqlite-dev \
+    sqlite-libs \
+    git \
+    curl \
+    openssl-dev \
+    ca-certificates
+
+# === PASO 2: CONFIGURAR NODE-GYP Y NPM ===
+RUN echo "📦 Configurando Node.js..." && \
+    # Actualizar npm
+    npm install -g npm@latest && \
+    # Configurar para compilar siempre localmente
+    npm config set registry https://registry.npmjs.org && \
+    npm config set fetch-retries 5 && \
+    npm config set fetch-retry-factor 2 && \
+    npm config set fetch-retry-mintimeout 10000 && \
+    npm config set fetch-retry-maxtimeout 60000
+
+# Variables de entorno CRÍTICAS para sqlite3
+ENV npm_config_build_from_source=true
+ENV npm_config_optional=false
+ENV npm_config_ignore_scripts=false
+ENV SQLITE3_LIB_DIR=/usr/lib
+ENV SQLITE3_INCLUDE_DIR=/usr/include
+ENV npm_config_sqlite=/usr
+ENV LDFLAGS="-L/usr/lib"
+ENV CPPFLAGS="-I/usr/include"
+
+WORKDIR /app
+
+# === PASO 3: INSTALAR SQLITE3 PRIMERO (MÉTODO ESPECIAL) ===
+COPY package.json package-lock.json* ./
+
+RUN echo "🔨 Instalando sqlite3 (enfoque especial)..." && \
+    # Método 1: Intentar instalar con todas las flags
+    { npm install sqlite3@6.0.1 \
+      --build-from-source \
+      --sqlite=/usr \
+      --nodedir=/usr/include \
+      --verbose \
+      --legacy-peer-deps 2>&1 | tee /tmp/sqlite-install.log || \
+
+    # Método 2: Si falla, intentar con versión 5.x
+    echo "⚠️  Método 1 falló, intentando versión 5.x..." && \
+    npm install sqlite3@5.1.6 \
+      --build-from-source \
+      --sqlite=/usr \
+      --legacy-peer-deps 2>&1 | tee -a /tmp/sqlite-install.log; } && \
+
+    # Verificar instalación
+    echo "✅ Verificando sqlite3..." && \
+    node -e "try { console.log('sqlite3 version:', require('sqlite3/package.json').version) } catch(e) { console.error('ERROR sqlite3:', e.message); process.exit(1) }"
+
+# === PASO 4: INSTALAR EL RESTO DE DEPENDENCIAS ===
+RUN echo "📦 Instalando demás dependencias..." && \
+    npm ci --legacy-peer-deps --ignore-scripts && \
+    echo "✅ Dependencias instaladas"
+
+# === PASO 5: COPIAR Y CONSTRUIR APLICACIÓN ===
+COPY . .
+
+RUN echo "🏗️  Construyendo aplicación..." && \
+    NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 npm run build && \
+    echo "✅ Build completado"
+
+# === PASO 6: LIMPIAR (reducir tamaño imagen) ===
+RUN echo "🧹 Limpiando..." && \
+    apk del .build-deps && \
+    rm -rf /tmp/* /var/cache/apk/* && \
+    echo "✅ Limpieza completada"
+
+# === PASO 7: IMAGEN FINAL RUNTIME ===
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN echo "👤 Configurando usuario..." && \
+    addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copiar solo lo necesario
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/ || exit 1
+
+CMD ["node", "server.js"]
+
+# Mensaje final
+LABEL description="Fiestaco - Solución definitiva para problemas de sqlite3"
+LABEL maintainer="Claude <noreply@anthropic.com>"

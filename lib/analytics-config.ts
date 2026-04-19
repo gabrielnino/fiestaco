@@ -29,7 +29,7 @@ export const SESSION_CONFIG = {
   
   // Generate session ID
   generateSessionId: (): string => {
-    return crypto.randomUUID();
+    return `session_${crypto.randomUUID()}`;
   },
 } as const;
 

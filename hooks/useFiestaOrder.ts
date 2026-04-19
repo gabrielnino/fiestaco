@@ -3,15 +3,14 @@
  * Separates business logic from UI components
  */
 
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { analytics } from '@/lib/analytics';
 import {
   Flavor,
   Addon,
   Drink,
   OrderState,
-  OrderSummary,
-  AnalyticsEvents
+  OrderSummary
 } from '@/types/fiesta.types';
 import { COLORS, FLAVORS, ADDONS, DRINKS, BASE_PRICE, WHATSAPP_NUMBER } from '@/lib/constants';
 

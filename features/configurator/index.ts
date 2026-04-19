@@ -1,8 +1,8 @@
 // Components
 export { default as Step1Flavor } from "./components/step-1-flavor";
-// export { default as Step2Flavor } from "./components/step-2-flavor";
-// export { default as Step3Addons } from "./components/step-3-addons";
-// export { default as Step4Drinks } from "./components/step-4-drinks";
+export { default as Step2Flavor } from "./components/step-2-flavor";
+export { default as Step3Addons } from "./components/step-3-addons";
+export { default as Step4Drinks } from "./components/step-4-drinks";
 
 // Types
 export type {

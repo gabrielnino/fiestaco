@@ -524,7 +524,7 @@ export default function AnalyticsDashboard() {
             </div>
           ) : (
             <div>
-              {s.channel_attribution.map((ch, i) => {
+              {s.channel_attribution.map((ch, _i) => {
                 const maxRev = Math.max(...s.channel_attribution.map(c => c.revenue), 1);
                 const channelColor = ch.utm_source === 'instagram' ? '#E1306C' :
                   ch.utm_source === 'tiktok' ? '#69C9D0' :

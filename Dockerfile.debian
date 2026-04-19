@@ -1,0 +1,42 @@
+# Dockerfile con Debian para evitar problemas de Alpine
+FROM node:20-slim
+
+WORKDIR /app
+
+# Instalar herramientas necesarias para módulos nativos en Debian
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configurar npm para problemas de red
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm config set fetch-retry-maxtimeout 600000 && \
+    npm config set fetch-retry-mintimeout 10000
+
+# Copiar archivos de dependencias
+COPY package.json package-lock.json* ./
+
+# Instalar dependencias
+RUN npm ci --legacy-peer-deps
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Construir la aplicación
+RUN npm run build
+
+# Exponer puerto
+EXPOSE 3001
+
+# Comando para ejecutar
+CMD ["npm", "start"]

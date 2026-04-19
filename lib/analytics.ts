@@ -1,7 +1,7 @@
 import {
   API_CONFIG,
   SESSION_CONFIG,
-  AUTH_CONFIG
+  // AUTH_CONFIG
 } from './analytics-config';
 
 const API_URL = API_CONFIG.BASE_PATH;
@@ -14,7 +14,7 @@ export function generateOrderId(): string {
   const now = new Date();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
   const dd = String(now.getUTCDate()).padStart(2, '0');
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
   return `FCO-${mm}${dd}-${rand}`;
 }
 
@@ -76,6 +76,21 @@ export function getUTM(): Record<string, string | null> {
   try {
     const stored = localStorage.getItem(UTM_STORAGE_KEY);
     if (stored) return JSON.parse(stored);
+
+    // Also check current URL for UTM params
+    if (window.location && window.location.search) {
+      const params = new URLSearchParams(window.location.search);
+      const utmSource = params.get('utm_source');
+      if (utmSource) {
+        return {
+          utm_source: utmSource,
+          utm_medium: params.get('utm_medium'),
+          utm_campaign: params.get('utm_campaign'),
+          utm_content: params.get('utm_content'),
+          captured_at: new Date().toISOString(),
+        };
+      }
+    }
   } catch {
     // Fail silently
   }

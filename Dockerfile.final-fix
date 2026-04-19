@@ -1,0 +1,68 @@
+FROM node:20-alpine AS builder
+
+# 1. Instalar herramientas básicas
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# 2. Copiar package.json
+COPY package.json package-lock.json* ./
+
+# 3. Estrategia: Crear package.json temporal SIN sqlite3
+# sqlite3 es el paquete nativo problemático
+# sqlite es el wrapper JS que puede funcionar sin sqlite3
+RUN echo 'Modificando package.json para remover sqlite3...' && \
+    # Guardar original
+    cp package.json package.json.original && \
+    # Usar jq para remover sqlite3 (si está instalado)
+    (apk add --no-cache jq 2>/dev/null || echo "jq no disponible, usando método alternativo") && \
+    # Método con jq si está disponible
+    (jq 'del(.dependencies.sqlite3)' package.json > package.json.tmp 2>/dev/null && mv package.json.tmp package.json || \
+    # Método alternativo sin jq
+    echo "Usando método alternativo sin jq" && \
+    grep -v '"sqlite3"' package.json > package.json.tmp && mv package.json.tmp package.json)
+
+# 4. Instalar dependencias modificadas
+RUN echo 'Instalando dependencias sin sqlite3...' && \
+    npm ci --legacy-peer-deps
+
+# 5. Restaurar package.json original
+RUN mv package.json.original package.json
+
+# 6. Copiar aplicación
+COPY . .
+
+# 7. Configurar entorno para deshabilitar sqlite3
+ENV NODE_ENV=production
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# 8. Construir aplicación
+RUN echo 'Construyendo aplicación...' && \
+    npm run build && \
+    echo '✅ Build exitoso!'
+
+# 9. Imagen final
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+CMD ["node", "server.js"]

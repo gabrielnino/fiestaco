@@ -26,7 +26,7 @@ module.exports = {
   },
 
   // Setup files
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js', '<rootDir>/jest.extreme.setup.js'],
 
   // Módulos
   moduleNameMapper: {

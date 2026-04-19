@@ -1,0 +1,75 @@
+# Dockerfile SIN SQLITE3 - Solución definitiva
+# Usa variable de entorno para deshabilitar analytics SQLite
+
+FROM node:20-alpine AS base
+
+# Herramientas básicas (sin herramientas pesadas de compilación)
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# Copiar dependencias
+COPY package.json package-lock.json* ./
+
+# Estrategia: Remover sqlite3 de las dependencias temporalmente
+# Creamos un package.json modificado sin sqlite3
+RUN cp package.json package.json.backup && \
+    cat package.json | grep -v '"sqlite3"' > package.json.tmp && \
+    mv package.json.tmp package.json && \
+    # También necesitamos mantener sqlite (el wrapper JS)
+    # pero sqlite3 (nativo) es opcional según el código
+
+# Instalar dependencias sin sqlite3
+RUN npm ci --legacy-peer-deps
+
+# Restaurar package.json original
+RUN mv package.json.backup package.json
+
+# Copiar aplicación
+COPY . .
+
+# Variables de entorno CRÍTICAS
+ENV NODE_ENV=production
+ENV DISABLE_SQLITE_ANALYTICS=true  # ¡ESTO DESHABILITA SQLITE!
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Construir aplicación
+RUN npm run build
+
+# Verificar que build fue exitoso
+RUN echo "✅ Build completado sin sqlite3" && \
+    echo "📊 SQLite deshabilitado via DISABLE_SQLITE_ANALYTICS=true"
+
+# Imagen final
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV DISABLE_SQLITE_ANALYTICS=true  # Mantener deshabilitado en runtime
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=base /app/public ./public
+COPY --from=base /app/.next/standalone ./
+COPY --from=base /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+# Health check simple
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -q -O- http://localhost:3001 >/dev/null 2>&1 || exit 1
+
+CMD ["node", "server.js"]
+
+LABEL description="Fiestaco - Build sin sqlite3 (analytics deshabilitado)"
+LABEL maintainer="Claude <noreply@anthropic.com>"
+LABEL sqlite="disabled"
+LABEL analytics="memory-only"

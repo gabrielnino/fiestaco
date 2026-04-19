@@ -1,0 +1,25 @@
+# Docker Compose simple para desarrollo/pruebas
+version: '3.8'
+
+services:
+  fiestaco-dev:
+    image: node:20-bullseye-slim
+    container_name: fiestaco-dev
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - HOSTNAME=0.0.0.0
+      - NEXT_TELEMETRY_DISABLED=1
+    command: sh -c "npm install --legacy-peer-deps && npm run dev"
+    networks:
+      - fiestaco-network
+
+networks:
+  fiestaco-network:
+    driver: bridge

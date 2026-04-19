@@ -107,11 +107,11 @@ export function useConfiguratorAnalytics({
   const trackAbandon = useCallback(() => {
     if (state.started && !state.converted) {
       analytics.wizardAbandon({
-        step: state.currentStep,
+        at_step: state.currentStep,
         flavor1: state.flavor1?.id || null,
         flavor2: state.flavor2?.id || null,
-        addonsCount: state.addons.length,
-        price: state.currentPrice,
+        addons_count: state.addons.length,
+        had_price: state.currentPrice,
       });
     }
   }, [state]);

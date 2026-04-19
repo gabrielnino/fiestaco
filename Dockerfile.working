@@ -1,0 +1,32 @@
+# Dockerfile simplificado para Fiestaco
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instalar herramientas necesarias para módulos nativos
+RUN apk add --no-cache libc6-compat python3 make g++ linux-headers py3-pip
+
+# Copiar package.json primero para aprovechar cache de Docker
+COPY package.json package-lock.json* ./
+
+# Configurar npm y instalar dependencias
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm install --legacy-peer-deps
+
+# Copiar el resto de la aplicación
+COPY . .
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Construir la aplicación
+RUN npm run build
+
+# Exponer puerto
+EXPOSE 3001
+
+# Comando para ejecutar
+CMD ["npm", "start"]

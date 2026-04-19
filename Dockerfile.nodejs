@@ -1,0 +1,39 @@
+# Dockerfile usando Node.js bullseye (más completo que alpine)
+FROM node:20-bullseye-slim
+
+WORKDIR /app
+
+# Instalar dependencias del sistema mínimas
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar package files
+COPY package.json package-lock.json* ./
+
+# Instalar dependencias sin optional y con legacy-peer-deps
+RUN npm install --omit=optional --legacy-peer-deps
+
+# Copiar código fuente
+COPY . .
+
+# Variables de entorno para build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Construir aplicación
+RUN npm run build
+
+# Puerto
+EXPOSE 3001
+
+# Usuario no-root
+RUN groupadd -r nodejs && useradd -r -g nodejs nextjs
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+# Comando para iniciar la aplicación
+CMD ["npm", "start"]

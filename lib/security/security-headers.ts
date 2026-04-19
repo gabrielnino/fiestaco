@@ -130,7 +130,7 @@ export function csrfProtectionMiddleware(req: any, res: any, next: Function) {
 /**
  * Generar y almacenar token CSRF
  */
-export function generateCsrfToken(req: any, res: any): string {
+export function generateCsrfToken(req: any, _res: any): string {
   const crypto = require("crypto");
   const token = crypto.randomBytes(32).toString("hex");
 

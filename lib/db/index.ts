@@ -6,6 +6,12 @@ import fs from 'fs';
 let db: any = null;
 
 export async function getDb() {
+  // Si SQLite está deshabilitado, devolver null
+  if (process.env['DISABLE_SQLITE_ANALYTICS'] === 'true') {
+    console.log('📊 SQLite analytics deshabilitado (DISABLE_SQLITE_ANALYTICS=true)');
+    return null;
+  }
+
   if (!db) {
     const dbDir = path.join(process.cwd(), 'data');
     const dbPath = path.join(dbDir, 'analytics.db');
@@ -18,10 +24,16 @@ export async function getDb() {
 
     console.log(`📊 Inicializando SQLite en: ${dbPath}`);
 
-    db = await open({
-      filename: dbPath,
-      driver: sqlite3.Database
-    });
+    try {
+      db = await open({
+        filename: dbPath,
+        driver: sqlite3.Database
+      });
+    } catch (error) {
+      console.error('❌ Error al inicializar SQLite:', error);
+      console.log('📊 Usando modo sin base de datos para analytics');
+      return null;
+    }
     
     // Inicializar esquema
     await db.exec(`
@@ -71,9 +83,20 @@ export async function getDb() {
 // Función para obtener estadísticas básicas
 export async function getBasicStats(days: number = 7) {
   const db = await getDb();
-  
+
+  if (!db) {
+    // Devolver estadísticas vacías si SQLite está deshabilitado
+    return {
+      total_events: 0,
+      unique_sessions: 0,
+      page_views: 0,
+      wizard_starts: 0,
+      whatsapp_clicks: 0
+    };
+  }
+
   const stats = await db.get(`
-    SELECT 
+    SELECT
       COUNT(*) as total_events,
       COUNT(DISTINCT session_id) as unique_sessions,
       SUM(CASE WHEN event_name = 'page_view' THEN 1 ELSE 0 END) as page_views,
@@ -82,6 +105,6 @@ export async function getBasicStats(days: number = 7) {
     FROM events
     WHERE created_at >= DATETIME('now', ?)
   `, [`-${days} days`]);
-  
+
   return stats;
 }

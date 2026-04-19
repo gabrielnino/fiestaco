@@ -1,0 +1,31 @@
+# Dockerfile para modo standalone de Next.js
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copiar solo los archivos necesarios del output standalone
+COPY .next/standalone ./
+COPY .next/static ./.next/static
+COPY public ./public
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV DISABLE_SQLITE_ANALYTICS=true
+
+# Puerto
+EXPOSE 3001
+
+# Usuario no-root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001
+
+# Cambiar propietario
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+# Comando para iniciar (modo standalone)
+CMD ["node", "server.js"]

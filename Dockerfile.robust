@@ -1,0 +1,85 @@
+# Dockerfile robusto para Fiestaco - Solución completa
+# Resuelve problemas de DNS, red y compilación de sqlite3
+
+FROM node:20-alpine AS base
+
+# 1. CONFIGURAR SISTEMA - DNS y herramientas
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    echo "nameserver 1.1.1.1" >> /etc/resolv.conf && \
+    apk add --no-cache --virtual .build-deps \
+    python3 \
+    make \
+    g++ \
+    linux-headers \
+    build-base \
+    sqlite-dev \
+    sqlite-libs \
+    git \
+    curl \
+    ca-certificates \
+    openssl
+
+# 2. CONFIGURAR NPM - Evitar problemas de red
+RUN npm config set registry https://registry.npmjs.org/ && \
+    npm config set fetch-retry-maxtimeout 300000 && \
+    npm config set fetch-retry-mintimeout 10000 && \
+    npm config set fetch-timeout 300000
+
+# Variables de entorno para sqlite3
+ENV npm_config_build_from_source=true
+ENV SQLITE3_LIB_DIR=/usr/lib
+ENV SQLITE3_INCLUDE_DIR=/usr/include
+ENV npm_config_sqlite=/usr
+
+WORKDIR /app
+
+# 3. COPIAR DEPENDENCIAS - Capa cacheable
+COPY package.json package-lock.json* ./
+
+# 4. INSTALAR DEPENDENCIAS - Enfoque por pasos
+# Instalar sqlite3 primero con compilación explícita
+RUN npm install sqlite3 --build-from-source --sqlite=/usr --legacy-peer-deps
+
+# Instalar el resto de dependencias (ignorar scripts problemáticos)
+RUN npm ci --legacy-peer-deps --ignore-scripts
+
+# 5. LIMPIAR HERRAMIENTAS DE COMPILACIÓN (reducir tamaño)
+RUN apk del .build-deps && \
+    apk add --no-cache sqlite-libs
+
+# 6. COPIAR APLICACIÓN
+COPY . .
+
+# 7. CONSTRUIR APLICACIÓN
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# 8. IMAGEN FINAL - Solo runtime
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copiar desde builder
+COPY --from=base /app/public ./public
+COPY --from=base /app/.next/standalone ./
+COPY --from=base /app/.next/static ./.next/static
+
+# Permisos
+RUN chown -R nextjs:nodejs /app
+
+# Usuario no-root
+USER nextjs
+
+# Puerto
+EXPOSE 3001
+
+# Comando
+CMD ["node", "server.js"]

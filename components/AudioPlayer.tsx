@@ -12,7 +12,7 @@ interface AudioPlayerProps {
 
 export default function AudioPlayer({
   autoPlay = false,
-  showControls = true,
+  showControls: _showControls = true,
   position = 'bottom-right',
   size = 'medium',
 }: AudioPlayerProps) {

@@ -104,19 +104,23 @@ export async function POST(request: NextRequest) {
     try {
       const { getDb } = await import('@/lib/db');
       const db = await getDb();
-      
-      // Sanitizar metadata para SQLite
-      const sanitizedMetadata = metadata ? JSON.stringify(metadata) : null;
-      
-      await db.run(
-        `INSERT INTO events (session_id, event_name, page_path, metadata) 
-         VALUES (?, ?, ?, ?)`,
-        [sessionId.trim(), eventName.trim(), pagePath.trim(), sanitizedMetadata]
-      );
-      
-      dbSuccess = true;
-      console.log(`✅ Evento guardado en DB: ${eventName}`);
-      
+
+      if (db) {
+        // Sanitizar metadata para SQLite
+        const sanitizedMetadata = metadata ? JSON.stringify(metadata) : null;
+
+        await db.run(
+          `INSERT INTO events (session_id, event_name, page_path, metadata)
+           VALUES (?, ?, ?, ?)`,
+          [sessionId.trim(), eventName.trim(), pagePath.trim(), sanitizedMetadata]
+        );
+
+        dbSuccess = true;
+        console.log(`✅ Evento guardado en DB: ${eventName}`);
+      } else {
+        console.log('📊 SQLite deshabilitado, evento no guardado en DB');
+      }
+
     } catch (dbError) {
       console.warn('⚠️ No se pudo guardar en DB (pero la API responde):', (dbError as Error).message);
       // NO fallamos la solicitud si la DB falla

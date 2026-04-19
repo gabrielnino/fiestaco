@@ -1,0 +1,59 @@
+FROM node:20-alpine AS builder
+
+# Herramientas para compilación general (no específicas para sqlite3)
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+# PASO CRÍTICO: Crear un package.json temporal que NO incluya sqlite3
+# Pero SÍ incluya sqlite (el wrapper JS)
+COPY package.json package-lock.json* ./
+
+# Método SIMPLE y EFECTIVO: usar sed para comentar sqlite3
+RUN sed -i 's/"sqlite3": "^6.0.1"/"sqlite3-disabled": "0.0.0"/' package.json
+
+# Instalar dependencias (sqlite3 no se instalará porque no existe la versión 0.0.0)
+RUN npm ci --legacy-peer-deps
+
+# Restaurar package.json original
+RUN sed -i 's/"sqlite3-disabled": "0.0.0"/"sqlite3": "^6.0.1"/' package.json
+
+# Copiar aplicación
+COPY . .
+
+# VARIABLE CRÍTICA: Deshabilitar SQLite
+ENV NODE_ENV=production
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Build
+RUN npm run build
+
+# ============ RUNTIME ============
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV DISABLE_SQLITE_ANALYTICS=true
+ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
+
+EXPOSE 3001
+
+# Health check optimizado para Next.js
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3001/api/health || exit 1
+
+CMD ["node", "server.js"]

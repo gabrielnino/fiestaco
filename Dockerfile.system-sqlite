@@ -1,0 +1,44 @@
+# Dockerfile con sqlite3 del sistema para evitar problemas de npm
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instalar sqlite3 desde repositorios de Alpine
+RUN apk add --no-cache \
+    sqlite-dev \
+    sqlite-libs \
+    python3 \
+    make \
+    g++ \
+    linux-headers
+
+# Configurar npm para usar sqlite3 del sistema
+ENV npm_config_sqlite_libname=sqlite3
+ENV npm_config_sqlite=/usr
+
+# Configurar npm
+RUN npm config set registry https://registry.npmjs.org/
+
+# Copiar package.json
+COPY package.json package-lock.json* ./
+
+# Instalar dependencias con flag para sqlite3
+RUN npm ci --legacy-peer-deps --sqlite=/usr --build-from-source
+
+# Copiar aplicación
+COPY . .
+
+# Variables de entorno
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV HOSTNAME=0.0.0.0
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Construir
+RUN npm run build
+
+# Exponer puerto
+EXPOSE 3001
+
+# Comando
+CMD ["npm", "start"]

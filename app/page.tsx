@@ -6,10 +6,12 @@ import SimpleAudioPlayer from "../components/SimpleAudioPlayer";
 import T from "./translations.json";
 
 import { COLORS, FLAVORS as DEFAULT_FLAVORS, ADDONS as DEFAULT_ADDONS, DRINKS as DEFAULT_DRINKS, BASE_PRICE as DEFAULT_BASE_PRICE, WHATSAPP_NUMBER } from "../lib/constants";
-import Step1Flavor from "../components/Step1Flavor";
-import Step2Flavor from "../components/Step2Flavor";
-import Step3Addons from "../components/Step3Addons";
-import Step4Drinks from "../components/Step4Drinks";
+import {
+  Step1Flavor,
+  Step2Flavor,
+  Step3Addons,
+  Step4Drinks
+} from "@/features/configurator";
 import { analytics, generateOrderId } from "../lib/analytics";
 import { WizardContext, WizardState } from "../lib/wizard-context";
 
@@ -128,7 +130,7 @@ export default function FiestaCo() {
   }, []);
 
 
-  const visibleFlavors = showMoreFlavors ? FLAVORS : FLAVORS.slice(0, 6);
+  // const visibleFlavors = showMoreFlavors ? FLAVORS : FLAVORS.slice(0, 6); // No longer used
 
   const toggleAddon = (id: string) => {
     const wasSelected = addons.includes(id);
@@ -684,11 +686,15 @@ export default function FiestaCo() {
 
             {currentStep === 1 && (
               <Step1Flavor
-                flavor1={flavor1}
-                flavor2={flavor2}
+                selectedFlavor={flavor1}
+                secondFlavor={flavor2}
+                flavors={FLAVORS}
                 onSelect={handleFlavor1Select}
-                t={t}
-                visibleFlavors={visibleFlavors}
+                translations={{
+                  title: t.step1Title,
+                  moreOptions: t.showMore,
+                  next: t.next
+                }}
                 showMoreFlavors={showMoreFlavors}
                 onShowMore={() => setShowMoreFlavors(true)}
                 onNext={() => setCurrentStep(2)}
@@ -697,33 +703,41 @@ export default function FiestaCo() {
 
             {currentStep === 2 && (
               <Step2Flavor
-                containerRef={{ current: null }}
-                flavor1={flavor1}
-                flavor2={flavor2}
+                firstFlavor={flavor1}
+                selectedFlavor={flavor2}
+                flavors={FLAVORS}
                 onSelect={handleFlavor2Select}
-                t={t}
-                visibleFlavors={visibleFlavors}
+                translations={{
+                  title: t.step2Title,
+                  next: t.next
+                }}
                 onNext={() => setCurrentStep(3)}
               />
             )}
 
             {currentStep === 3 && (
               <Step3Addons
-                containerRef={{ current: null }}
-                addons={addons}
+                selectedAddons={addons}
+                addons={ADDONS}
                 onToggle={toggleAddon}
+                translations={{
+                  title: t.step3Title,
+                  next: t.next
+                }}
                 onNext={handleNextAddons}
-                t={t}
               />
             )}
 
             {currentStep === 4 && (
               <Step4Drinks
-                containerRef={{ current: null }}
-                drinks={drinks}
+                selectedDrinks={drinks}
+                drinks={DRINKS}
                 onToggle={toggleDrink}
+                translations={{
+                  title: t.step4Title,
+                  next: t.next
+                }}
                 onNext={handleNextDrinks}
-                t={t}
               />
             )}
 
