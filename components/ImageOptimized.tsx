@@ -22,6 +22,7 @@ const LOCAL_ALT_TEXT_MAP: Record<string, string> = {
   
   // Addons
   '/images/addons/cheese.webp': 'Mexican Cheese - Queso fresco and cotija cheese blend',
+  '/images/addons/guacamole.jpg': 'Fresh Guacamole - Hass avocado with lime and cilantro',
   
   // Background y logo
   '/background.webp': 'Mexican food background with traditional patterns',
@@ -31,9 +32,9 @@ const LOCAL_ALT_TEXT_MAP: Record<string, string> = {
   '/images/placeholder.webp': 'Taco placeholder image',
 };
 
-// Mapeo de imágenes externas (Wikipedia)
+// Mapeo de imágenes externas (Wikipedia y otros)
 const EXTERNAL_ALT_TEXT_MAP: Record<string, string> = {
-  'guacomole.jpg': 'Fresh Guacamole - Hass avocado with lime and cilantro',
+  'Guacamole-Autentico': 'Fresh Guacamole - Hass avocado with lime and cilantro',
   'Pico_de_Gallo': 'Pico de Gallo - Fresh tomato salsa with onions and cilantro',
   'sour_cream_and_cheese.jpg': 'Mexican Crema - Tangy crema with lime zest',
   'jalapeno_capsicum': 'Pickled Jalapeños - Spicy pickled peppers',
@@ -60,18 +61,18 @@ export default function ImageOptimized({
   const [error, setError] = useState(false);
   
   // Determinar alt text automáticamente
-  const getAltText = () => {
+  const getAltText = (): string => {
     if (alt) return alt;
     
     const srcString = typeof src === 'string' ? src : '';
     
     // Buscar en mapa local
     if (srcString in LOCAL_ALT_TEXT_MAP) {
-      return LOCAL_ALT_TEXT_MAP[srcString];
+      return LOCAL_ALT_TEXT_MAP[srcString] || fallbackAlt;
     }
     
-    // Buscar en mapa externo (Wikipedia)
-    if (srcString.includes('upload.wikimedia.org')) {
+    // Buscar en mapa externo (cualquier URL que no sea local)
+    if (srcString.startsWith('http')) {
       const filename = srcString.split('/').pop() || '';
       for (const [key, value] of Object.entries(EXTERNAL_ALT_TEXT_MAP)) {
         if (filename.includes(key)) {
@@ -128,10 +129,11 @@ export function ProductImage({ productId, productName, ...props }: {
     
     // Addons
     'cheese': '/images/addons/cheese.webp',
+    'guac': '/images/addons/guacamole.jpg',
   };
   
   const imageSrc = imageMap[productId] || '/images/placeholder.webp';
-  const altText = LOCAL_ALT_TEXT_MAP[imageSrc] || `${productName} - Fiestaco`;
+  const altText = (imageSrc in LOCAL_ALT_TEXT_MAP ? LOCAL_ALT_TEXT_MAP[imageSrc] : null) || `${productName} - Fiestaco`;
   
   return (
     <ImageOptimized

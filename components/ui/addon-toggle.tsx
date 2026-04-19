@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, KeyboardEvent } from "react";
-import Image from "next/image";
+import ImageOptimized from "@/components/ImageOptimized";
 import { COLORS } from "@/lib/constants";
 import { Addon, Drink } from "@/types/fiesta.types";
 
@@ -97,7 +97,7 @@ export default function AddonToggle({
       <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
         {item.image && (
           <div style={imageContainerStyles}>
-            <Image
+            <ImageOptimized
               src={item.image}
               alt={label}
               width={isDrink ? 54 : 64}

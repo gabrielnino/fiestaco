@@ -1,6 +1,6 @@
 import { COLORS } from "@/lib/constants";
 import { Flavor } from "@/types/fiesta.types";
-import Image from "next/image";
+import ImageOptimized from "@/components/ImageOptimized";
 import { CSSProperties } from "react";
 
 interface FlavorCardProps {
@@ -90,7 +90,7 @@ export default function FlavorCard({
           border: `2px solid ${selected ? COLORS.orange : COLORS.cardBorder}`,
         }}
       >
-        <Image
+        <ImageOptimized
           src={flavor.image}
           alt={flavor.name}
           width={80}
