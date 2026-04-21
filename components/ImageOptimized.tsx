@@ -23,6 +23,10 @@ const LOCAL_ALT_TEXT_MAP: Record<string, string> = {
   // Addons
   '/images/addons/cheese.webp': 'Mexican Cheese - Queso fresco and cotija cheese blend',
   '/images/addons/guacamole.jpg': 'Fresh Guacamole - Hass avocado with lime and cilantro',
+  '/images/addons/pico_de_gallo.jpg': 'Pico de Gallo - Fresh tomato salsa with onions and cilantro',
+  '/images/addons/crema.jpg': 'Mexican Crema - Tangy crema with lime zest',
+  '/images/addons/jalapenos.jpg': 'Pickled Jalapeños - Spicy pickled peppers',
+  '/images/addons/salsa_verde.jpg': 'Salsa Verde - Green tomatillo salsa',
 
   // Drinks
   '/images/drinks/corona.png': 'Corona Beer - Mexican lager beer',
@@ -38,13 +42,9 @@ const LOCAL_ALT_TEXT_MAP: Record<string, string> = {
 };
 
 // Mapeo de imágenes externas (Wikipedia y otros)
-const EXTERNAL_ALT_TEXT_MAP: Record<string, string> = {
-  'Guacamole-Autentico': 'Fresh Guacamole - Hass avocado with lime and cilantro',
-  'Pico_de_Gallo': 'Pico de Gallo - Fresh tomato salsa with onions and cilantro',
-  'sour_cream_and_cheese.jpg': 'Mexican Crema - Tangy crema with lime zest',
-  'jalapeno_capsicum': 'Pickled Jalapeños - Spicy pickled peppers',
-  'Salsa_verde.jpg': 'Salsa Verde - Green tomatillo salsa',
-};
+// NOTA: Todas las imágenes son locales ahora, este mapa está vacío pero se mantiene
+// por compatibilidad con el código existente
+const EXTERNAL_ALT_TEXT_MAP: Record<string, string> = {};
 
 interface ImageOptimizedProps extends Omit<ImageProps, 'alt'> {
   alt?: string;

@@ -31,10 +31,10 @@ export const FLAVORS = [
 export const ADDONS = [
   { id: "cheese", name: "Shredded Cheese", price: 12, image: "/images/addons/cheese.webp" },
   { id: "guac", name: "Guacamole", price: 12, image: "/images/addons/guacamole.jpg" },
-  { id: "pico", name: "Pico de Gallo", price: 12, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Mmm..._Pico_de_Gallo_%285923456035%29.jpg/500px-Mmm..._Pico_de_Gallo_%285923456035%29.jpg" },
-  { id: "crema", name: "Mexican Crema", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Bowl_of_chili_with_sour_cream_and_cheese.jpg/500px-Bowl_of_chili_with_sour_cream_and_cheese.jpg" },
-  { id: "jalaps", name: "Pickled Jalapeños", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Immature_jalapeno_capsicum_annuum_var_annuum.jpeg/500px-Immature_jalapeno_capsicum_annuum_var_annuum.jpeg" },
-  { id: "salsa-verde", name: "Salsa Verde", price: 8, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Salsa_verde.jpg/500px-Salsa_verde.jpg" },
+  { id: "pico", name: "Pico de Gallo", price: 12, image: "/images/addons/pico_de_gallo.jpg" },
+  { id: "crema", name: "Mexican Crema", price: 8, image: "/images/addons/crema.jpg" },
+  { id: "jalaps", name: "Pickled Jalapeños", price: 8, image: "/images/addons/jalapenos.jpg" },
+  { id: "salsa-verde", name: "Salsa Verde", price: 8, image: "/images/addons/salsa_verde.jpg" },
 ];
 
 export const DRINKS = [
