@@ -3,12 +3,12 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { AddonToggle } from "@/components/ui";
 import { Addon, Drink } from "@/types/fiesta.types";
 
-// Mock para Next.js Image
-jest.mock("next/image", () => ({
+// Mock para ImageOptimized (que ahora usa AddonToggle)
+jest.mock("@/components/ImageOptimized", () => ({
   __esModule: true,
   default: (props: any) => (
     // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
-    <img {...props} />
+    <img {...props} alt={props.alt || "mock image"} />
   ),
 }));
 

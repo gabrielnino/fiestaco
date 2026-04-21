@@ -3,12 +3,15 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+# Instalar Python y dependencias necesarias para sqlite3
+RUN apk add --no-cache python3 make g++
+
 # Copiar archivos
 COPY package*.json ./
 COPY . .
 
 # Instalar y construir
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 RUN npm run build
 
 # Exponer puerto
