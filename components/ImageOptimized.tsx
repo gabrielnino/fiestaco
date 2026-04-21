@@ -23,7 +23,12 @@ const LOCAL_ALT_TEXT_MAP: Record<string, string> = {
   // Addons
   '/images/addons/cheese.webp': 'Mexican Cheese - Queso fresco and cotija cheese blend',
   '/images/addons/guacamole.jpg': 'Fresh Guacamole - Hass avocado with lime and cilantro',
-  
+
+  // Drinks
+  '/images/drinks/corona.png': 'Corona Beer - Mexican lager beer',
+  '/images/drinks/budweiser.jpg': 'Budweiser Lager - American lager beer',
+  '/images/drinks/pacifico.jpeg': 'Pacifico Lager - Mexican lager beer',
+
   // Background y logo
   '/background.webp': 'Mexican food background with traditional patterns',
   '/logo.webp': 'Fiestaco Logo - Skull design with Mexican aesthetic',
@@ -39,9 +44,6 @@ const EXTERNAL_ALT_TEXT_MAP: Record<string, string> = {
   'sour_cream_and_cheese.jpg': 'Mexican Crema - Tangy crema with lime zest',
   'jalapeno_capsicum': 'Pickled Jalapeños - Spicy pickled peppers',
   'Salsa_verde.jpg': 'Salsa Verde - Green tomatillo salsa',
-  'Corona_Extra_beer_bottle': 'Corona Beer - Mexican lager beer',
-  'Budweiser_bottle_close-up.jpg': 'Budweiser Lager - American lager beer',
-  'Pacifico_Clara.jpeg': 'Pacifico Lager - Mexican lager beer',
 };
 
 interface ImageOptimizedProps extends Omit<ImageProps, 'alt'> {
