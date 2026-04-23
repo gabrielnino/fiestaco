@@ -132,6 +132,10 @@ export function ProductImage({ productId, productName, ...props }: {
     // Addons
     'cheese': '/images/addons/cheese.webp',
     'guac': '/images/addons/guacamole.jpg',
+    'pico': '/images/addons/pico_de_gallo.jpg',
+    'crema': '/images/addons/crema.jpg',
+    'jalaps': '/images/addons/jalapenos.jpg',
+    'salsa-verde': '/images/addons/salsa_verde.jpg',
   };
   
   const imageSrc = imageMap[productId] || '/images/placeholder.webp';

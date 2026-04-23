@@ -1,0 +1,35 @@
+# Dockerfile estable para FiestaCo
+FROM node:20-alpine
+
+# Instalar dependencias necesarias
+RUN apk add --no-cache curl
+
+WORKDIR /app
+
+# Copiar aplicación standalone
+COPY .next/standalone /app/.next/standalone
+COPY .next/static /app/.next/standalone/.next/static
+COPY public /app/.next/standalone/public
+
+# Asegurar que los directorios necesarios existen
+RUN mkdir -p /app/.next/standalone/data
+
+# Script de inicio mejorado
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'echo "🚀 Iniciando FiestaCo..."' >> /app/start.sh && \
+    echo 'cd /app/.next/standalone' >> /app/start.sh && \
+    echo 'echo "📂 Directorio de trabajo: $(pwd)"' >> /app/start.sh && \
+    echo 'echo "🔍 Verificando server.js..."' >> /app/start.sh && \
+    echo 'ls -la server.js 2>/dev/null && echo "✅ server.js encontrado" || echo "❌ server.js no encontrado"' >> /app/start.sh && \
+    echo 'echo "🌐 Iniciando servidor en puerto ${PORT:-3001}..."' >> /app/start.sh && \
+    echo 'exec node server.js' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
+EXPOSE 3001
+ENV PORT=3001
+ENV DISABLE_SQLITE_ANALYTICS=true
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3001}/ || exit 1
+
+CMD ["/app/start.sh"]

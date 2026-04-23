@@ -6,13 +6,13 @@ set -e
 echo "🚀 Iniciando FiestaCo en Docker..."
 
 # Verificar que la imagen existe
-if ! docker image inspect fiestaco:final > /dev/null 2>&1; then
-    echo "❌ Error: La imagen 'fiestaco:final' no existe."
-    echo "   Construye la imagen primero con: docker build -t fiestaco:final -f Dockerfile.final ."
+if ! docker image inspect fiestaco:latest > /dev/null 2>&1; then
+    echo "❌ Error: La imagen 'fiestaco:latest' no existe."
+    echo "   Construye la imagen primero con: docker build -t fiestaco:latest -f Dockerfile.simple ."
     exit 1
 fi
 
-echo "✅ Imagen encontrada: fiestaco:final"
+echo "✅ Imagen encontrada: fiestaco:latest"
 
 # Detener contenedor existente si existe
 if docker ps -a --filter "name=fiestaco" --format "{{.Names}}" | grep -q "^fiestaco$"; then
@@ -28,7 +28,7 @@ docker run -d \
     --name fiestaco \
     -p 3001:3001 \
     --restart unless-stopped \
-    fiestaco:final
+    fiestaco:latest
 
 # Esperar a que el contenedor inicie
 echo "⏳ Esperando que la aplicación inicie..."
