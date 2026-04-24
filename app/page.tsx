@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import Link from "next/link";
 import { SkullLogo } from "@/components/ui";
 import SimpleAudioPlayer from "../components/SimpleAudioPlayer";
 import T from "./translations.json";
@@ -1024,7 +1025,7 @@ export default function FiestaCo() {
           </div>
         </div>
 
-        {/* Bottom row: Email text + Copyright */}
+        {/* Bottom row: Legal links, Email text + Copyright */}
         <div
           style={{
             display: "flex",
@@ -1036,6 +1037,36 @@ export default function FiestaCo() {
             paddingTop: 16,
           }}
         >
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <Link
+              href="/legal/terms"
+              style={{
+                color: "#666",
+                fontSize: 12,
+                textDecoration: "none",
+                transition: "color 0.2s"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
+            >
+              Terms of Service
+            </Link>
+            <span style={{ color: "#444", fontSize: 12 }}>|</span>
+            <Link
+              href="/legal/privacy"
+              style={{
+                color: "#666",
+                fontSize: 12,
+                textDecoration: "none",
+                transition: "color 0.2s"
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.orange)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "#666")}
+            >
+              Privacy Policy
+            </Link>
+          </div>
+
           <a
             href="mailto:hello@fiestaco.today"
             style={{ color: "#555", fontSize: 13, textDecoration: "none" }}
