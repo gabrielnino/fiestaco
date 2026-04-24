@@ -28,6 +28,33 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# temporary/backup files
+package.json.backup
+package.json.temp
+package.json.temp.copy
+public/images/placeholder.webp
+
+# Docker test files
+Dockerfile.*-*
+Dockerfile.all-images-fixed
+Dockerfile.complete
+Dockerfile.final-working
+Dockerfile.fixed-standalone
+Dockerfile.from-existing
+Dockerfile.optimized-new
+Dockerfile.quick-rebuild
+Dockerfile.temp-no-sqlite
+Dockerfile.ultimate
+Dockerfile.with-all-images
+
+# test scripts
+rebuild-with-addons.sh
+replace-placeholder.sh
+run-final-docker.sh
+run-fixed-docker.sh
+test-addons.sh
+verify-all-images.sh
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
