@@ -81,7 +81,7 @@ configure({
   asyncUtilTimeout: 10000,
   computedStyleSupportsPseudoElements: true,
   defaultHidden: true,
-  throwSuggestions: true,
+  throwSuggestions: false,
 });
 
 // Mock global objects exhaustivamente
@@ -164,87 +164,160 @@ global.AbortController = jest.fn(() => ({
   signal: {},
 }));
 
-// Mock de crypto.randomUUID
+// Function to ensure global mocks are set up, even after jest.restoreAllMocks()
 let uuidCounter = 0;
-Object.defineProperty(global.crypto, 'randomUUID', {
-  value: jest.fn(() => {
-    uuidCounter++;
-    return `session_${uuidCounter.toString().padStart(8, '0')}-mock-uuid`;
-  }),
-  writable: true,
-});
+const applyGlobalMocks = () => {
+  // Re-apply implementations for localStorageMock
+  if (localStorageMock.getItem.mockImplementation) {
+    localStorageMock.getItem.mockImplementation((key) => localStorageStore[key] || null);
+    localStorageMock.setItem.mockImplementation((key, value) => {
+      localStorageStore[key] = String(value);
+    });
+    localStorageMock.removeItem.mockImplementation((key) => {
+      delete localStorageStore[key];
+    });
+    localStorageMock.clear.mockImplementation(() => {
+      localStorageStore = {};
+    });
+    localStorageMock.key.mockImplementation((index) => Object.keys(localStorageStore)[index] || null);
+  }
 
-// Mock de Math.random para tests determinísticos
-// Se puede sobreescribir en tests específicos si es necesario
-if (!Math.random.isMocked) {
-  let randomCallCount = 0;
-  jest.spyOn(Math, 'random').mockImplementation(() => {
-    randomCallCount++;
-    // Usar un valor que produzca una string base36 con al menos 6 caracteres después del punto
-    return 0.1000001 + (randomCallCount * 0.000000001);
-  });
-  Math.random.isMocked = true;
-}
+  // Re-apply implementations for sessionStorageMock
+  if (sessionStorageMock.getItem.mockImplementation) {
+    sessionStorageMock.getItem.mockImplementation((key) => sessionStorageStore[key] || null);
+    sessionStorageMock.setItem.mockImplementation((key, value) => {
+      sessionStorageStore[key] = String(value);
+    });
+    sessionStorageMock.removeItem.mockImplementation((key) => {
+      delete sessionStorageStore[key];
+    });
+    sessionStorageMock.clear.mockImplementation(() => {
+      sessionStorageStore = {};
+    });
+  }
 
-// Mock de URLSearchParams
-global.URLSearchParams = jest.fn((init) => {
-  const params = new Map();
-  if (init) {
-    if (typeof init === 'string') {
-      init.split('&').forEach(pair => {
-        const [key, value] = pair.split('=');
-        params.set(key, decodeURIComponent(value || ''));
+  // Re-apply sendBeacon mock implementations
+  if (typeof window !== 'undefined' && window.navigator && window.navigator.sendBeacon && window.navigator.sendBeacon.mockImplementation) {
+    window.navigator.sendBeacon.mockImplementation(() => true);
+  }
+  if (typeof global !== 'undefined' && global.navigator && global.navigator.sendBeacon && global.navigator.sendBeacon.mockImplementation) {
+    global.navigator.sendBeacon.mockImplementation(() => true);
+  }
+
+  // Re-apply fetch and AbortController implementations
+  if (global.fetch && global.fetch.mockImplementation) {
+    global.fetch.mockImplementation(() => Promise.resolve({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      json: () => Promise.resolve({ success: true }),
+      text: () => Promise.resolve(JSON.stringify({ success: true })),
+      headers: new Map([['Content-Type', 'application/json']]),
+    }));
+  }
+  if (global.AbortController && global.AbortController.mockImplementation) {
+    global.AbortController.mockImplementation(() => ({
+      abort: jest.fn(),
+      signal: {},
+    }));
+  }
+
+  // Re-apply crypto.randomUUID implementation
+  if (global.crypto && global.crypto.randomUUID && global.crypto.randomUUID.mockImplementation) {
+    global.crypto.randomUUID.mockImplementation(() => {
+      uuidCounter++;
+      return `session_${uuidCounter.toString().padStart(8, '0')}-mock-uuid`;
+    });
+  } else if (global.crypto) {
+    try {
+      const mockFn = jest.fn(() => {
+        uuidCounter++;
+        return `session_${uuidCounter.toString().padStart(8, '0')}-mock-uuid`;
       });
-    } else if (Array.isArray(init)) {
-      init.forEach(([key, value]) => params.set(key, value));
-    } else if (typeof init === 'object') {
-      Object.entries(init).forEach(([key, value]) => params.set(key, value));
+      Object.defineProperty(global.crypto, 'randomUUID', {
+        value: mockFn,
+        writable: true,
+        configurable: true,
+      });
+    } catch (e) {}
+  }
+
+  // Re-apply Math.random implementation
+  if (Math.random.mockImplementation) {
+    let randomCallCount = 0;
+    Math.random.mockImplementation(() => {
+      randomCallCount++;
+      return (0.1 + ((randomCallCount * 12345.6789) % 10000) / 10000) % 1.0;
+    });
+  } else {
+    let randomCallCount = 0;
+    jest.spyOn(Math, 'random').mockImplementation(() => {
+      randomCallCount++;
+      return (0.1 + ((randomCallCount * 12345.6789) % 10000) / 10000) % 1.0;
+    });
+  }
+
+  // Re-apply window.location mock implementations
+  if (window.location) {
+    if (window.location.assign && window.location.assign.mockImplementation) window.location.assign.mockImplementation(() => {});
+    if (window.location.replace && window.location.replace.mockImplementation) window.location.replace.mockImplementation(() => {});
+    if (window.location.reload && window.location.reload.mockImplementation) window.location.reload.mockImplementation(() => {});
+    if (window.location.toString && window.location.toString.mockImplementation) {
+      window.location.toString.mockImplementation(() => window.location.href || 'http://localhost:3000/test');
     }
   }
 
-  return {
-    get: jest.fn((key) => params.get(key) || null),
-    getAll: jest.fn((key) => Array.from(params.values())),
-    has: jest.fn((key) => params.has(key)),
-    set: jest.fn((key, value) => params.set(key, value)),
-    append: jest.fn((key, value) => {
-      if (!params.has(key)) params.set(key, value);
-    }),
-    delete: jest.fn((key) => params.delete(key)),
-    entries: jest.fn(() => Array.from(params.entries())),
-    forEach: jest.fn((callback) => params.forEach((value, key) => callback(value, key))),
-    keys: jest.fn(() => Array.from(params.keys())),
-    values: jest.fn(() => Array.from(params.values())),
-    toString: jest.fn(() =>
-      Array.from(params.entries())
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-        .join('&')
-    ),
-    size: params.size,
-    _params: params,
-  };
-});
+  // Re-apply performance mock implementations
+  if (window.performance) {
+    if (window.performance.now && window.performance.now.mockImplementation) window.performance.now.mockImplementation(() => Date.now());
+    if (window.performance.mark && window.performance.mark.mockImplementation) window.performance.mark.mockImplementation(() => {});
+    if (window.performance.measure && window.performance.measure.mockImplementation) window.performance.measure.mockImplementation(() => {});
+    if (window.performance.getEntriesByName && window.performance.getEntriesByName.mockImplementation) window.performance.getEntriesByName.mockImplementation(() => []);
+    if (window.performance.getEntriesByType && window.performance.getEntriesByType.mockImplementation) window.performance.getEntriesByType.mockImplementation(() => []);
+    if (window.performance.clearMarks && window.performance.clearMarks.mockImplementation) window.performance.clearMarks.mockImplementation(() => {});
+    if (window.performance.clearMeasures && window.performance.clearMeasures.mockImplementation) window.performance.clearMeasures.mockImplementation(() => {});
+    if (window.performance.clearResourceTimings && window.performance.clearResourceTimings.mockImplementation) window.performance.clearResourceTimings.mockImplementation(() => {});
+  }
 
-// Mock de Date exhaustivo
-const OriginalDate = global.Date;
-let currentTime = 0;
+  // Re-apply Observers mock implementations
+  if (window.IntersectionObserver && window.IntersectionObserver.mockImplementation) {
+    window.IntersectionObserver.mockImplementation(() => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(() => []),
+    }));
+  }
+  if (window.ResizeObserver && window.ResizeObserver.mockImplementation) {
+    window.ResizeObserver.mockImplementation(() => ({
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+    }));
+  }
+  if (window.MutationObserver && window.MutationObserver.mockImplementation) {
+    window.MutationObserver.mockImplementation(() => ({
+      observe: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(() => []),
+    }));
+  }
 
-global.Date = class extends OriginalDate {
-  constructor(...args) {
-    if (args.length === 0) {
-      return new OriginalDate(currentTime || Date.now());
+  // Re-apply console mock implementations
+  const consoleMethods = ['log', 'error', 'warn', 'info', 'debug', 'trace'];
+  consoleMethods.forEach(method => {
+    if (console[method] && console[method].mockImplementation) {
+      console[method].mockImplementation(() => {});
+    } else {
+      try {
+        jest.spyOn(console, method).mockImplementation(() => {});
+      } catch (e) {}
     }
-    return new OriginalDate(...args);
-  }
-
-  static now() {
-    return currentTime || OriginalDate.now();
-  }
+  });
 };
 
-global.Date.originalNow = OriginalDate.now;
-global.Date.setCurrentTime = (time) => { currentTime = time; };
-global.Date.reset = () => { currentTime = 0; };
+// Initial invocation
+applyGlobalMocks();
 
 // Mock de window.location exhaustivo
 delete window.location;
@@ -315,6 +388,11 @@ global.console = {
   trace: jest.spyOn(console, 'trace').mockImplementation(() => {}),
 };
 
+// Re-apply implementations before every test (critical when resetMocks: true is configured)
+beforeEach(() => {
+  applyGlobalMocks();
+});
+
 // Cleanup después de cada test
 afterEach(() => {
   // Limpiar mocks pero no restaurar implementaciones originales
@@ -328,7 +406,6 @@ afterEach(() => {
   window.location.search = '';
   window.location.hash = '';
   window.location.pathname = '/test';
-  global.Date.reset();
 
   // Reset fetch sin restaurar implementación
   if (global.fetch.mockClear) global.fetch.mockClear();

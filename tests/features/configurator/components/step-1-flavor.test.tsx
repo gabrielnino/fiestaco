@@ -90,7 +90,7 @@ describe('Step1Flavor', () => {
     );
 
     // Click on first flavor
-    const flavorCard = screen.getByText('Classic Beef').closest('[role="button"]');
+    const flavorCard = screen.getByText('Classic Beef').closest('button');
     if (flavorCard) {
       fireEvent.click(flavorCard);
     }

@@ -244,7 +244,7 @@ describe('getSessionId - CASOS EXTREMOS Y CRÍTICOS', () => {
   describe('CASOS EXTREMOS (Edge Cases)', () => {
     test('should handle localStorage throwing errors', () => {
       // Simular localStorage fallando
-      jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      const spy = jest.spyOn(localStorage, 'getItem').mockImplementation(() => {
         throw new Error('Storage failed');
       });
 
@@ -253,6 +253,8 @@ describe('getSessionId - CASOS EXTREMOS Y CRÍTICOS', () => {
       expect(sessionId).toMatch(/^fallback_/);
       expect(sessionId).toContain('_');
       expect(sessionId).toBeValidSessionId();
+
+      spy.mockRestore();
     });
 
     test('should handle corrupted localStorage data', () => {
@@ -357,22 +359,24 @@ describe('getSessionId - CASOS EXTREMOS Y CRÍTICOS', () => {
       // Mock Date.now para controlar el tiempo
       global.Date.now = jest.fn(() => currentTime);
 
-      const firstSessionId = getSessionId();
+      try {
+        const firstSessionId = getSessionId();
 
-      // Avanzar 23 horas
-      currentTime += 23 * 60 * 60 * 1000;
-      const sessionIdAfter23Hours = getSessionId();
+        // Avanzar 23 horas
+        currentTime += 23 * 60 * 60 * 1000;
+        const sessionIdAfter23Hours = getSessionId();
 
-      // Avanzar 25 horas (total)
-      currentTime += 2 * 60 * 60 * 1000;
-      const sessionIdAfter25Hours = getSessionId();
+        // Avanzar 25 horas (total)
+        currentTime += 2 * 60 * 60 * 1000;
+        const sessionIdAfter25Hours = getSessionId();
 
-      expect(firstSessionId).toBe(sessionIdAfter23Hours);
-      expect(firstSessionId).not.toBe(sessionIdAfter25Hours);
-      expect(sessionIdAfter25Hours).toBeValidSessionId();
-
-      // Restaurar Date.now
-      global.Date.now = originalDate;
+        expect(firstSessionId).toBe(sessionIdAfter23Hours);
+        expect(firstSessionId).not.toBe(sessionIdAfter25Hours);
+        expect(sessionIdAfter25Hours).toBeValidSessionId();
+      } finally {
+        // Restaurar Date.now
+        global.Date.now = originalDate;
+      }
     });
   });
 
@@ -545,7 +549,7 @@ describe('UTM Functions - CASOS EXTREMOS Y CRÍTICOS', () => {
 
     test('should handle localStorage quota exceeded', () => {
       // Simular quota exceeded
-      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      const spy = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
         throw new DOMException('QuotaExceededError');
       });
 
@@ -553,6 +557,8 @@ describe('UTM Functions - CASOS EXTREMOS Y CRÍTICOS', () => {
 
       // No debería lanzar errores al usuario
       expect(() => captureUTM()).not.toThrow();
+
+      spy.mockRestore();
     });
 
     test('should handle JSON parsing errors in localStorage', () => {
@@ -603,14 +609,16 @@ describe('UTM Functions - CASOS EXTREMOS Y CRÍTICOS', () => {
       jest.useFakeTimers();
       jest.setSystemTime(mockDate);
 
-      window.location.search = '?utm_source=google';
-      captureUTM();
+      try {
+        window.location.search = '?utm_source=google';
+        captureUTM();
 
-      const utm = getUTM();
+        const utm = getUTM();
 
-      expect(utm.captured_at).toBe('2024-01-15T12:00:00.000Z');
-
-      jest.useRealTimers();
+        expect(utm.captured_at).toBe('2024-01-15T12:00:00.000Z');
+      } finally {
+        jest.useRealTimers();
+      }
     });
 
     test('should handle all standard UTM parameters', () => {
@@ -723,9 +731,13 @@ describe('UTM Functions - CASOS EXTREMOS Y CRÍTICOS', () => {
 // ============================================
 
 describe('trackEvent & analytics - CASOS EXTREMOS Y CRÍTICOS', () => {
+  let originalEnv: string | undefined;
+
   beforeEach(() => {
     localStorage.clear();
     jest.clearAllMocks();
+    originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
     global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
@@ -738,6 +750,7 @@ describe('trackEvent & analytics - CASOS EXTREMOS Y CRÍTICOS', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    process.env.NODE_ENV = originalEnv;
   });
 
   describe('CASOS DE EN MEDIO (Typical Cases)', () => {
@@ -898,10 +911,9 @@ describe('trackEvent & analytics - CASOS EXTREMOS Y CRÍTICOS', () => {
       const call = (fetch as jest.Mock).mock.calls[0];
       const body = JSON.parse(call[1].body);
 
-      // Con la lógica actual y mocks, obtiene 'direct'
-      // TODO: Arreglar mock de URLSearchParams para que funcione correctamente
-      expect(body.metadata.utm_source).toBe('direct');
-      expect(body.metadata.utm_campaign).toBe(null);
+      // Verify UTM parameters are captured correctly from URL
+      expect(body.metadata.utm_source).toBe('google');
+      expect(body.metadata.utm_campaign).toBe('test');
       expect(body.metadata.custom).toBe('data');
     });
 
@@ -941,26 +953,28 @@ describe('trackEvent & analytics - CASOS EXTREMOS Y CRÍTICOS', () => {
 
     test('analytics.sessionEnd should use sendBeacon when available', () => {
       const beaconSpy = jest.spyOn(navigator, 'sendBeacon').mockReturnValue(true);
-      const trackEventSpy = jest.spyOn({ trackEvent }, 'trackEvent' as any);
 
       analytics.sessionEnd();
 
       expect(beaconSpy).toHaveBeenCalled();
-      expect(trackEventSpy).not.toHaveBeenCalled();
+      expect(fetch).not.toHaveBeenCalled();
     });
 
-    test('analytics.sessionEnd should fall back to trackEvent without sendBeacon', () => {
+    test('analytics.sessionEnd should fall back to trackEvent without sendBeacon', async () => {
       // Simular que sendBeacon no está disponible
       Object.defineProperty(navigator, 'sendBeacon', {
         value: undefined,
         writable: true,
       });
 
-      const trackEventSpy = jest.spyOn({ trackEvent }, 'trackEvent' as any);
+      await analytics.sessionEnd();
 
-      analytics.sessionEnd();
-
-      expect(trackEventSpy).toHaveBeenCalledWith('session_end');
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('/api/analytics'),
+        expect.objectContaining({
+          body: expect.stringContaining('"eventName":"session_end"'),
+        })
+      );
     });
   });
 
@@ -1213,11 +1227,10 @@ describe('Integration Tests - Complete User Flow', () => {
     const calls = (fetch as jest.Mock).mock.calls;
     calls.forEach(call => {
       const body = JSON.parse(call[1].body);
-      // Con mocks actuales, obtiene 'direct'
-      // TODO: Arreglar mock de URLSearchParams
-      expect(body.metadata.utm_source).toBe('direct');
-      expect(body.metadata.utm_medium).toBe(null);
-      expect(body.metadata.utm_campaign).toBe(null);
+      // Verify UTM parameters are captured correctly from URL
+      expect(body.metadata.utm_source).toBe('google');
+      expect(body.metadata.utm_medium).toBe('cpc');
+      expect(body.metadata.utm_campaign).toBe('taco_tuesday');
     });
   });
 
@@ -1300,6 +1313,9 @@ describe('Boundary Value Analysis', () => {
 
 describe('Error Recovery and Resilience', () => {
   test('System should recover from temporary network failure', async () => {
+    const originalEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
+
     let callCount = 0;
     global.fetch = jest.fn(() => {
       callCount++;
@@ -1325,6 +1341,9 @@ describe('Error Recovery and Resilience', () => {
 
     expect(consoleSpy).toHaveBeenCalledTimes(3); // 3 warnings
     expect(fetch).toHaveBeenCalledTimes(4); // 4 attempts
+
+    consoleSpy.mockRestore();
+    process.env.NODE_ENV = originalEnv;
   });
 
   test.skip('System should handle intermittent sendBeacon failures', () => {

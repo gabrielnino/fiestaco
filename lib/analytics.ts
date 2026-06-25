@@ -14,7 +14,7 @@ export function generateOrderId(): string {
   const now = new Date();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
   const dd = String(now.getUTCDate()).padStart(2, '0');
-  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `FCO-${mm}${dd}-${rand}`;
 }
 
@@ -23,14 +23,28 @@ export function generateOrderId(): string {
 // ─────────────────────────────────────────────
 export function getSessionId(): string {
   if (typeof window === 'undefined') return '';
+  let stored = null;
   try {
-    const stored = localStorage.getItem(SESSION_CONFIG.STORAGE_KEY);
-    if (stored) {
+    stored = localStorage.getItem(SESSION_CONFIG.STORAGE_KEY);
+  } catch {
+    // If accessing/reading localStorage throws, assume localStorage is disabled
+    return `fallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  if (stored) {
+    try {
       const sessionData = JSON.parse(stored);
-      if (Date.now() - sessionData.timestamp < SESSION_CONFIG.EXPIRY_MS) {
-        return sessionData.id;
+      if (sessionData && typeof sessionData.id === 'string' && typeof sessionData.timestamp === 'number') {
+        if (Date.now() - sessionData.timestamp < SESSION_CONFIG.EXPIRY_MS) {
+          return sessionData.id;
+        }
       }
+    } catch {
+      // Ignore parsing errors and generate a new session ID
     }
+  }
+
+  try {
     const newSessionId = SESSION_CONFIG.generateSessionId();
     localStorage.setItem(SESSION_CONFIG.STORAGE_KEY, JSON.stringify({
       id: newSessionId,
@@ -94,7 +108,12 @@ export function getUTM(): Record<string, string | null> {
   } catch {
     // Fail silently
   }
-  return { utm_source: 'direct' };
+  return {
+    utm_source: 'direct',
+    utm_medium: null,
+    utm_campaign: null,
+    utm_content: null,
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -126,7 +145,7 @@ export async function trackEvent(
     } else {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
-      await fetch(API_URL, {
+      const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -134,6 +153,9 @@ export async function trackEvent(
         keepalive: true,
       });
       clearTimeout(timeoutId);
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
     }
 
     if (process.env.NODE_ENV === 'development') {
@@ -146,6 +168,17 @@ export async function trackEvent(
   }
 }
 
+// State to track wizard progress for automatic abandon detection in sessionEnd
+const wizardState = {
+  started: false,
+  converted: false,
+  currentStep: 0,
+  flavor1: null as string | null,
+  flavor2: null as string | null,
+  addonsCount: 0,
+  currentPrice: 45,
+};
+
 // ─────────────────────────────────────────────
 // EVENT HELPERS
 // ─────────────────────────────────────────────
@@ -154,13 +187,35 @@ export const analytics = {
   pageView: () => trackEvent('page_view'),
 
   // Wizard flow
-  wizardStart: () => trackEvent('wizard_start'),
-  stepVisit: (step: number) => trackEvent('step_visit', { step }),
+  wizardStart: () => {
+    wizardState.started = true;
+    wizardState.converted = false;
+    wizardState.currentStep = 1;
+    wizardState.flavor1 = null;
+    wizardState.flavor2 = null;
+    wizardState.addonsCount = 0;
+    wizardState.currentPrice = 45;
+    return trackEvent('wizard_start');
+  },
+  stepVisit: (step: number) => {
+    wizardState.currentStep = step;
+    return trackEvent('step_visit', { step });
+  },
   stepBack: (from_step: number) => trackEvent('step_back', { from_step }),
 
   // Product selections
-  flavorSelect: (flavor: string) => trackEvent('flavor_select', { flavor }),
-  addonSelect: (addon: string) => trackEvent('addon_select', { addon }),
+  flavorSelect: (flavor: string) => {
+    if (!wizardState.flavor1) {
+      wizardState.flavor1 = flavor;
+    } else if (!wizardState.flavor2) {
+      wizardState.flavor2 = flavor;
+    }
+    return trackEvent('flavor_select', { flavor });
+  },
+  addonSelect: (addon: string) => {
+    wizardState.addonsCount++;
+    return trackEvent('addon_select', { addon });
+  },
   drinkSelect: (drink: string) => trackEvent('drink_select', { drink }),
 
   // Kit summary (fires when user reaches summary step)
@@ -170,7 +225,10 @@ export const analytics = {
     addons: string[];
     drinks: string[];
     order_value: number;
-  }) => trackEvent('kit_complete', data),
+  }) => {
+    wizardState.converted = true;
+    return trackEvent('kit_complete', data);
+  },
 
   // CONVERSION — includes order_id + order_value for real revenue tracking
   whatsappClick: (data: {
@@ -181,7 +239,10 @@ export const analytics = {
     drinks: string[];
     order_value: number;
     combo: string;
-  }) => trackEvent('whatsapp_click', data),
+  }) => {
+    wizardState.converted = true;
+    return trackEvent('whatsapp_click', data);
+  },
 
   // ABANDON — fires when session ends mid-wizard without converting
   wizardAbandon: (data: {
@@ -190,13 +251,28 @@ export const analytics = {
     flavor2: string | null;
     addons_count: number;
     had_price: number;
-  }) => trackEvent('wizard_abandon', data),
+  }) => {
+    wizardState.started = false;
+    return trackEvent('wizard_abandon', data);
+  },
 
   // Session lifecycle
   sessionEnd: () => {
     const sessionId = getSessionId();
     const pagePath = window.location.pathname;
     const utm = getUTM();
+
+    // Auto-abandon if session ends mid-wizard
+    if (wizardState.started && !wizardState.converted && wizardState.currentStep > 0) {
+      analytics.wizardAbandon({
+        at_step: wizardState.currentStep,
+        flavor1: wizardState.flavor1,
+        flavor2: wizardState.flavor2,
+        addons_count: wizardState.addonsCount,
+        had_price: wizardState.currentPrice,
+      });
+    }
+
     if (navigator.sendBeacon) {
       const blob = new Blob([JSON.stringify({
         sessionId,
