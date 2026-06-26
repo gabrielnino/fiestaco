@@ -1,6 +1,6 @@
 import { useConfigurator } from "../context/configurator-context";
 import { useConfiguratorAnalytics } from "./use-configurator-analytics";
-import { Flavor, Addon, Drink } from "@/types/fiesta.types";
+import { Flavor } from "@/types/fiesta.types";
 
 interface UseConfiguratorOptions {
   onStateChange?: (state: any) => void;
