@@ -1,14 +1,13 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
 import path from 'path';
 import fs from 'fs';
 
 let db: any = null;
 
 export async function getDb() {
-  // Si SQLite está deshabilitado, devolver null
-  if (process.env['DISABLE_SQLITE_ANALYTICS'] === 'true') {
-    console.log('📊 SQLite analytics deshabilitado (DISABLE_SQLITE_ANALYTICS=true)');
+  // Si SQLite está deshabilitado o estamos en el entorno de Vercel, devolver null
+  const isDisabled = process.env['DISABLE_SQLITE_ANALYTICS'] === 'true' || process.env['VERCEL'] === '1';
+  if (isDisabled) {
+    console.log('📊 SQLite analytics deshabilitado (DISABLE_SQLITE_ANALYTICS o Vercel detected)');
     return null;
   }
 
@@ -25,6 +24,11 @@ export async function getDb() {
     console.log(`📊 Inicializando SQLite en: ${dbPath}`);
 
     try {
+      // Importación dinámica para evitar cargar binarios nativos si está deshabilitado
+      const sqlite3Module = await import('sqlite3');
+      const sqlite3 = sqlite3Module.default || sqlite3Module;
+      const { open } = await import('sqlite');
+
       db = await open({
         filename: dbPath,
         driver: sqlite3.Database
